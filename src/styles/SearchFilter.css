@@ -1,0 +1,88 @@
+.search-filter {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.filter-group select:focus {
+  box-shadow: 0 0 0 2px var(--primary-color-light);
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.filter-group select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.filter-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.search-btn {
+  background-color: var(--primary-color);
+}
+
+.reset-btn {
+  background-color: #888;
+}
+
+.search-btn:hover {
+  background-color: #4b51c0;
+}
+
+.reset-btn:hover {
+  background-color: #666;
+}
+
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
+  
+  .filter-group {
+    margin-bottom: 10px;
+  }
+  
+  .filter-group label {
+    font-size: 13px;
+  }
+  
+  .filter-group select {
+    padding: 8px;
+    font-size: 13px;
+  }
+} 

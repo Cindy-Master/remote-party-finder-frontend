@@ -1,0 +1,131 @@
+/* 职业图标样式 */
+.job-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  position: relative;
+  margin: 0 2px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.job-icon:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 职业类型样式 */
+.job-icon.tank {
+  background-color: var(--tank-color);
+}
+
+.job-icon.healer {
+  background-color: var(--healer-color);
+}
+
+.job-icon.dps {
+  background-color: var(--dps-color);
+}
+
+.job-icon.crafter {
+  background-color: #5b7f95;
+}
+
+.job-icon.gatherer {
+  background-color: #7fa05b;
+}
+
+/* 高亮效果 */
+.job-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%);
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+
+.job-icon:hover::before {
+  opacity: 0.8;
+}
+
+/* 职业组 */
+.job-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.job-group-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+/* 职业名称提示 */
+.job-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  pointer-events: none;
+  z-index: 1000;
+  font-weight: normal;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.job-icon-container {
+  position: relative;
+}
+
+.job-icon-container:hover .job-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+/* 职业图标容器 */
+.job-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* 适配暗色主题 */
+[data-theme="dark"] .job-icon {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .job-icon:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .job-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
+  }
+} 

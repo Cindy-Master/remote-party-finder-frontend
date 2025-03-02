@@ -1,0 +1,140 @@
+.listing-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin-bottom: 15px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.listing-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.listing-header {
+  padding: 12px 15px;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.listing-title {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.listing-time {
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.listing-time.urgent {
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+.listing-body {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.listing-info {
+  flex: 1;
+}
+
+.listing-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #555;
+  margin-right: 5px;
+}
+
+.cross-world-tag {
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 10px;
+}
+
+.slots-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 80px;
+}
+
+.slots {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+}
+
+.slots-label {
+  font-size: 12px;
+  color: #666;
+  display: block;
+  text-align: center;
+}
+
+.listing-footer {
+  padding: 15px;
+  border-top: 1px solid var(--border-color);
+  text-align: right;
+}
+
+.view-details-btn {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.view-details-btn:hover {
+  background-color: #4b51c0;
+}
+
+.listing-description {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.description-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: var(--primary-color);
+}
+
+.description-content {
+  font-size: 0.9em;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  max-height: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+} 
