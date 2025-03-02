@@ -71,7 +71,7 @@ const PlaceholderText = styled.span`
   color: var(--text-secondary);
 `;
 
-// 修改后的 DropdownMenu 不再使用 position:absolute，而是由 portal 以 fixed 定位
+// 通过 Portal 渲染的下拉框采用 fixed 定位
 const DropdownMenu = styled(motion.div)`
   background-color: var(--card-bg-dark, #202020);
   border: 1px solid var(--border-color);
@@ -91,8 +91,6 @@ const JobFilterTabs = styled.div`
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
 `;
-
-/* 以下 FilterTab、JobsGrid、JobItem、SelectAllButton、SelectedBadge 等样式不变 */
 
 const FilterTab = styled.div`
   position: relative;
@@ -207,7 +205,6 @@ const SelectedBadge = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 `;
 
-// 假定 JOB_GROUPS 和 ROLE_NAME_MAPPING 定义与原来一致
 const JOB_GROUPS = {
   '坦克': ['骑士', '战士', '暗黑骑士', '绝枪战士', '剑术师', '斧术师'],
   '治疗': ['白魔法师', '学者', '占星术士', '贤者', '幻术师'],
@@ -229,23 +226,26 @@ const ROLE_NAME_MAPPING = {
   '采集': '采集职业'
 };
 
-// 获取所有职业列表
 const ALL_JOBS = Object.values(JOB_GROUPS).flat();
-
 const JobSelector = ({ onChange, value = [], label = "职业" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedJobs, setSelectedJobs] = useState(value);
   const [activeFilter, setActiveFilter] = useState('全部');
-  // 用于定位下拉头，进而计算下拉菜单位置
   const headerRef = useRef(null);
+  const dropdownRef = useRef(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
+
+  // 当外部传入的 value 变化时，同步内部状态（受控组件）
+  useEffect(() => {
+    setSelectedJobs(value);
+  }, [value]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  useEffect(() => {
-    if (isOpen && headerRef.current) {
+  const updateDropdownPosition = () => {
+    if (headerRef.current) {
       const rect = headerRef.current.getBoundingClientRect();
       setDropdownPosition({
         top: rect.top,
@@ -254,13 +254,43 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
         height: rect.height,
       });
     }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      updateDropdownPosition();
+    }
   }, [isOpen]);
+
+  // 点击外部区域时关闭下拉框
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        headerRef.current && !headerRef.current.contains(event.target) &&
+        dropdownRef.current && !dropdownRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // 页面滚动或窗口变化时关闭下拉框
+  useEffect(() => {
+    const handleScrollOrResize = () => setIsOpen(false);
+    window.addEventListener('scroll', handleScrollOrResize);
+    window.addEventListener('resize', handleScrollOrResize);
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, []);
 
   const handleJobClick = (job) => {
     const updatedJobs = selectedJobs.includes(job)
       ? selectedJobs.filter(j => j !== job)
       : [...selectedJobs, job];
-    
     setSelectedJobs(updatedJobs);
     onChange && onChange(updatedJobs);
   };
@@ -278,24 +308,26 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
     onChange && onChange(updatedJobs);
   };
 
-  const clearAllInGroup = (group) => {
+  // 修改清除操作：不论是否全选，只要当前组中有选中项，点击就清除当前组选项
+  const clearGroupSelection = (group) => {
     const groupJobs = group === '全部' ? ALL_JOBS : JOB_GROUPS[group];
     const updatedJobs = selectedJobs.filter(job => !groupJobs.includes(job));
     setSelectedJobs(updatedJobs);
     onChange && onChange(updatedJobs);
   };
 
-  const isGroupAllSelected = (group) => {
-    const groupJobs = group === '全部' ? ALL_JOBS : JOB_GROUPS[group];
-    return groupJobs.every(job => selectedJobs.includes(job));
-  };
+  // 计算当前组中被选中的数量
+  const groupJobs = activeFilter === '全部' ? ALL_JOBS : JOB_GROUPS[activeFilter];
+  const groupSelectedCount = groupJobs.filter(job => selectedJobs.includes(job)).length;
 
   const getJobsToDisplay = () => {
-    if (activeFilter === '全部') {
-      return ALL_JOBS;
-    }
+    if (activeFilter === '全部') return ALL_JOBS;
     return JOB_GROUPS[activeFilter] || [];
   };
+
+  // 按钮文案：如果当前组中有选中项则显示“清除筛选”，否则显示“全选”
+  const buttonLabel = groupSelectedCount > 0 ? '清除筛选' : '全选';
+  const buttonIcon = groupSelectedCount > 0 ? <FiX size={14} /> : <FiCheck size={14} />;
 
   return (
     <Container className="job-selector">
@@ -307,11 +339,11 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
               <PlaceholderText>选择职业...</PlaceholderText>
             ) : (
               selectedJobs.slice(0, 10).map(job => (
-                <JobIcon 
-                  key={job} 
-                  job={job} 
-                  size="40px" 
-                  showTooltip={true} 
+                <JobIcon
+                  key={job}
+                  job={job}
+                  size="40px"
+                  showTooltip={true}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveJob(job);
@@ -320,83 +352,86 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
               ))
             )}
             {selectedJobs.length > 10 && (
-              <div className="more-jobs-count">
-                +{selectedJobs.length - 10}
-              </div>
+              <div className="more-jobs-count">+{selectedJobs.length - 10}</div>
             )}
           </SelectedJobsDisplay>
           {isOpen ? <FiChevronUp /> : <FiChevronDown />}
         </DropdownHeader>
-        
-        {isOpen && createPortal(
-          <AnimatePresence>
-            <DropdownMenu
-              className="job-selector-dropdown"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                position: 'fixed',
-                top: dropdownPosition.top + dropdownPosition.height + 8,
-                left: dropdownPosition.left,
-                width: dropdownPosition.width,
-              }}
-            >
-              <JobFilterTabs className="job-filter-tabs">
-                <FilterTab 
-                  active={activeFilter === '全部'} 
-                  onClick={() => setActiveFilter('全部')}
-                  className={`filter-tab ${activeFilter === '全部' ? 'active' : ''}`}
-                >
-                  <JobIcon job={ROLE_ICONS['全部职业']} size="28px" />
-                  <div className="filter-tab-tooltip">全部职业</div>
-                </FilterTab>
-                {Object.keys(JOB_GROUPS).map(group => (
-                  <FilterTab 
-                    key={group} 
-                    active={activeFilter === group} 
-                    onClick={() => setActiveFilter(group)}
-                    className={`filter-tab ${activeFilter === group ? 'active' : ''}`}
+
+        {isOpen &&
+          createPortal(
+            <AnimatePresence>
+              <DropdownMenu
+                ref={dropdownRef}
+                className="job-selector-dropdown"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  position: 'fixed',
+                  top: dropdownPosition.top + dropdownPosition.height + 8,
+                  left: dropdownPosition.left,
+                  width: dropdownPosition.width,
+                }}
+              >
+                <JobFilterTabs className="job-filter-tabs">
+                  <FilterTab
+                    active={activeFilter === '全部'}
+                    onClick={() => setActiveFilter('全部')}
+                    className={`filter-tab ${activeFilter === '全部' ? 'active' : ''}`}
                   >
-                    <JobIcon job={ROLE_ICONS[group] || group} size="28px" />
-                    <div className="filter-tab-tooltip">{ROLE_NAME_MAPPING[group] || group}</div>
+                    <JobIcon job={ROLE_ICONS['全部职业']} size="28px" />
+                    <div className="filter-tab-tooltip">全部职业</div>
                   </FilterTab>
-                ))}
-                
-                <SelectAllButton onClick={() => {
-                  isGroupAllSelected(activeFilter) 
-                    ? clearAllInGroup(activeFilter)
-                    : selectAllInGroup(activeFilter)
-                }}>
-                  {isGroupAllSelected(activeFilter) ? '取消全选' : '全选'}
-                  {isGroupAllSelected(activeFilter) ? <FiX size={14} /> : <FiCheck size={14} />}
-                </SelectAllButton>
-              </JobFilterTabs>
-              
-              <JobsGrid className="job-grid">
-                {getJobsToDisplay().map(job => (
-                  <JobItem 
-                    key={job}
-                    className={`job-item ${selectedJobs.includes(job) ? 'selected' : ''}`}
-                    isSelected={selectedJobs.includes(job)}
-                    onClick={() => handleJobClick(job)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <JobIcon job={job} size="40px" showTooltip={true} />
-                    {selectedJobs.includes(job) && (
-                      <SelectedBadge>
-                        <FiCheck size={12} />
-                      </SelectedBadge>
-                    )}
-                  </JobItem>
-                ))}
-              </JobsGrid>
-            </DropdownMenu>
-          </AnimatePresence>,
-          document.body
-        )}
+                  {Object.keys(JOB_GROUPS).map(group => (
+                    <FilterTab
+                      key={group}
+                      active={activeFilter === group}
+                      onClick={() => setActiveFilter(group)}
+                      className={`filter-tab ${activeFilter === group ? 'active' : ''}`}
+                    >
+                      <JobIcon job={ROLE_ICONS[group] || group} size="28px" />
+                      <div className="filter-tab-tooltip">{ROLE_NAME_MAPPING[group] || group}</div>
+                    </FilterTab>
+                  ))}
+                  
+                  <SelectAllButton onClick={() => {
+                    if (groupSelectedCount > 0) {
+                      clearGroupSelection(activeFilter);
+                    } else {
+                      selectAllInGroup(activeFilter);
+                    }
+                  }}>
+                    {buttonLabel}
+                    {buttonIcon}
+                  </SelectAllButton>
+                </JobFilterTabs>
+
+                <JobsGrid className="job-grid">
+                  {getJobsToDisplay().map(job => (
+                    <JobItem
+                      key={job}
+                      className={`job-item ${selectedJobs.includes(job) ? 'selected' : ''}`}
+                      isSelected={selectedJobs.includes(job)}
+                      onClick={() => handleJobClick(job)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <JobIcon job={job} size="40px" showTooltip={true} />
+                      {selectedJobs.includes(job) && (
+                        <SelectedBadge>
+                          <FiCheck size={12} />
+                        </SelectedBadge>
+                      )}
+                    </JobItem>
+                  ))}
+                </JobsGrid>
+              </DropdownMenu>
+            </AnimatePresence>,
+            document.body
+          )
+        }
       </DropdownContainer>
     </Container>
   );
