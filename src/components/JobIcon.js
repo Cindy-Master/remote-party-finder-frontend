@@ -58,12 +58,44 @@ const JOB_NAME_MAPPING = {
   'Blue Mage': '青魔法师',
   'Pictomancer': '绘灵法师',
   
+  // 生产职业
+  'CRP': '刻木匠',
+  'BSM': '锻铁匠',
+  'ARM': '铸甲匠',
+  'GSM': '雕金匠',
+  'LTW': '制革匠',
+  'WVR': '裁衣匠',
+  'ALC': '炼金术士',
+  'CUL': '烹调师',
+  'Carpenter': '刻木匠',
+  'Blacksmith': '锻铁匠',
+  'Armorer': '铸甲匠',
+  'Goldsmith': '雕金匠',
+  'Leatherworker': '制革匠',
+  'Weaver': '裁衣匠',
+  'Alchemist': '炼金术士',
+  'Culinarian': '烹调师',
+  
+  // 采集职业
+  'MIN': '采矿工',
+  'BTN': '园艺工',
+  'FSH': '捕鱼人',
+  'Miner': '采矿工',
+  'Botanist': '园艺工',
+  'Fisher': '捕鱼人',
+  
   // 职能
   'TANK': '坦克',
   'HEALER': '治疗',
   'DPS': 'DPS',
   'Tank': '坦克',
-  'Healer': '治疗'
+  'Healer': '治疗',
+  'CRAFTER': '生产职业',
+  'GATHERER': '采集职业',
+  'Crafter': '生产职业',
+  'Gatherer': '采集职业',
+  'DoH': '生产职业',
+  'DoL': '采集职业'
 };
 
 // 定义职业角色类型
@@ -112,7 +144,7 @@ const JOB_ABBREVIATIONS = {
   '召唤师': 'SMN',
   '赤魔法师': 'RDM',
   '青魔法师': 'BLU',
-  '绘灵法师': 'PIC',
+  '绘灵法师': 'PCT',
   // 生产职业
   '刻木匠': 'CRP',
   '锻铁匠': 'BSM',
@@ -139,7 +171,62 @@ const JOB_ICONS = {
   'ROLE_RANGED': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/bordered_dps_ranged.png',
   'ROLE_MAGIC': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/bordered_dps_magic.png',
   'ROLE_CRAFTER': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/sjob0.png',
-  'ROLE_GATHERER': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/sjob1.png',
+  'ROLE_GATHERER': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/sjob8.png',
+  
+  // 基础职业图标
+  'GLA': 'https://xivpf.ffpvp.top/pic/062101_hr1.png',
+  'MRD': 'https://xivpf.ffpvp.top/pic/062102_hr1.png',
+  'PGL': 'https://xivpf.ffpvp.top/pic/062103_hr1.png',
+  'LNC': 'https://xivpf.ffpvp.top/pic/062104_hr1.png',
+  'ROG': 'https://xivpf.ffpvp.top/pic/062129_hr1.png',
+  'ARC': 'https://xivpf.ffpvp.top/pic/062105_hr1.png',
+  'THM': 'https://xivpf.ffpvp.top/pic/062107_hr1.png',
+  'ACN': 'https://xivpf.ffpvp.top/pic/062126_hr1.png',
+  'CNJ': 'https://xivpf.ffpvp.top/pic/062106_hr1.png',
+  '剑术师': 'https://xivpf.ffpvp.top/pic/062101_hr1.png',
+  '格斗家': 'https://xivpf.ffpvp.top/pic/062102_hr1.png',
+  '斧术师': 'https://xivpf.ffpvp.top/pic/062103_hr1.png',
+  '枪术师': 'https://xivpf.ffpvp.top/pic/062104_hr1.png',
+  '双剑师': 'https://xivpf.ffpvp.top/pic/062129_hr1.png',
+  '弓箭手': 'https://xivpf.ffpvp.top/pic/062105_hr1.png',
+  '咒术师': 'https://xivpf.ffpvp.top/pic/062107_hr1.png',
+  '秘术师': 'https://xivpf.ffpvp.top/pic/062126_hr1.png',
+  '幻术师': 'https://xivpf.ffpvp.top/pic/062106_hr1.png',
+  
+  // 职业缩写映射到基础职业图标 - 用于职业图标的后备方案
+  'Gladiator': 'https://xivpf.ffpvp.top/pic/062101_hr1.png',
+  'Marauder': 'https://xivpf.ffpvp.top/pic/062102_hr1.png',
+  'Pugilist': 'https://xivpf.ffpvp.top/pic/062103_hr1.png',
+  'Lancer': 'https://xivpf.ffpvp.top/pic/062104_hr1.png',
+  'Rogue': 'https://xivpf.ffpvp.top/pic/062105_hr1.png',
+  'Archer': 'https://xivpf.ffpvp.top/pic/062106_hr1.png',
+  'Thaumaturge': 'https://xivpf.ffpvp.top/pic/062107_hr1.png',
+  'Arcanist': 'https://xivpf.ffpvp.top/pic/062108_hr1.png',
+  'Conjurer': 'https://xivpf.ffpvp.top/pic/062109_hr1.png',
+  
+  // 添加职业缩写的图标映射
+  'PLD': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob0.png',
+  'WAR': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob1.png',
+  'DRK': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob2.png',
+  'GNB': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob3.png',
+  'WHM': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob4.png',
+  'AST': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob5.png',
+  'SCH': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob6.png',
+  'SGE': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob7.png',
+  'MNK': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob8.png',
+  'DRG': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob9.png',
+  'NIN': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob10.png',
+  'SAM': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob11.png',
+  'RPR': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob12.png',
+  'BRD': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob13.png',
+  'MCH': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob14.png',
+  'DNC': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob15.png',
+  'BLM': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob16.png',
+  'SMN': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob17.png',
+  'RDM': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob18.png',
+  'BLU': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob19.png',
+  'VPR': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/DoW/VPR.png',
+  'PCT': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/DoM/PCT.png',
   
   // 坦克职业图标 - zjob0起始
   '骑士': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob0.png',
@@ -210,20 +297,67 @@ const ROLE_NAME_MAPPING = {
   'ROLE_TANK': '坦克职能',
   'ROLE_HEALER': '治疗职能',
   'ROLE_DPS': '输出职能',
+  'ROLE_ATTACK': '输出职能',
   'ROLE_MELEE': '近战输出',
   'ROLE_RANGED': '物理远程',
   'ROLE_MAGIC': '法系职业',
   'ROLE_CRAFTER': '生产职业',
-  'ROLE_GATHERER': '采集职业'
+  'ROLE_GATHERER': '采集职业',
+  'TANK': '坦克职能',
+  'HEALER': '治疗职能',
+  'DPS': '输出职能',
+  'ALL': '全部职业'
 };
 
 // 获取职业角色类型
 const getRoleType = (jobName) => {
+  if (!jobName) return 'UNKNOWN';
+  
+  // 检查是否为职业缩写
+  if (/^(CRP|BSM|ARM|GSM|LTW|WVR|ALC|CUL)$/.test(jobName)) {
+    return 'CRAFTER';
+  }
+  
+  if (/^(MIN|BTN|FSH)$/.test(jobName)) {
+    return 'GATHERER';
+  }
+  
+  // 检查中文职业名称
   for (const [role, jobs] of Object.entries(JOB_ROLES)) {
     if (jobs.includes(jobName)) {
       return role;
     }
   }
+  
+  // 检查JOB_NAME_MAPPING，获取中文名称后再判断
+  if (JOB_NAME_MAPPING[jobName]) {
+    const localizedName = JOB_NAME_MAPPING[jobName];
+    for (const [role, jobs] of Object.entries(JOB_ROLES)) {
+      if (jobs.includes(localizedName)) {
+        return role;
+      }
+    }
+  }
+  
+  // 处理特殊情况
+  if (jobName.startsWith('ROLE_TANK') || jobName === 'TANK' || jobName === 'Tank' || jobName === '坦克') {
+    return 'TANK';
+  }
+  if (jobName.startsWith('ROLE_HEALER') || jobName === 'HEALER' || jobName === 'Healer' || jobName === '治疗') {
+    return 'HEALER';
+  }
+  if (jobName.startsWith('ROLE_DPS') || jobName === 'DPS' || jobName.includes('DPS')) {
+    return 'DPS';
+  }
+  if (jobName.startsWith('ROLE_CRAFTER') || jobName === 'CRAFTER' || jobName === 'Crafter' || 
+      jobName === '生产职业' || jobName === 'DoH') {
+    return 'CRAFTER';
+  }
+  if (jobName.startsWith('ROLE_GATHERER') || jobName === 'GATHERER' || jobName === 'Gatherer' || 
+      jobName === '采集职业' || jobName === 'DoL') {
+    return 'GATHERER';
+  }
+  
   return 'UNKNOWN';
 };
 
@@ -231,16 +365,18 @@ const getRoleType = (jobName) => {
 const getRoleColor = (role) => {
   switch (role) {
     case 'TANK':
-    case '坦克':
       return 'var(--tank-color)';
     case 'HEALER':
-    case '治疗':
       return 'var(--healer-color)';
+    case 'DPS':
     case 'MELEE_DPS':
     case 'PHYSICAL_RANGED_DPS':
     case 'MAGICAL_RANGED_DPS':
-    case 'DPS':
       return 'var(--dps-color)';
+    case 'CRAFTER':
+      return 'var(--crafter-color)';
+    case 'GATHERER':
+      return 'var(--gatherer-color)';
     default:
       return '#999';
   }
@@ -256,23 +392,30 @@ const isRoleName = (job) => {
 
 // 检查是否应该使用职能图标
 const shouldUseRoleIcon = (job) => {
-  // 白魔法师职业组
-  const healerJobs = ['CNJ', 'WHM', 'SCH', 'AST', 'SGE', 'Conjurer', 'White Mage', 'Scholar', 'Astrologian', 'Sage'];
-  // 坦克职业组
-  const tankJobs = ['GLA', 'MRD', 'PLD', 'WAR', 'DRK', 'GNB', 'Gladiator', 'Marauder', 'Paladin', 'Warrior', 'Dark Knight', 'Gunbreaker'];
-  // DPS职业组
-  const dpsJobs = ['LNC', 'PGL', 'ROG', 'ARC', 'THM', 'ACN', 'MNK', 'DRG', 'NIN', 'BRD', 'MCH', 'DNC', 'BLM', 'SMN', 'RDM', 'BLU', 'SAM', 'RPR', 'VPR',
-                  'Lancer', 'Pugilist', 'Rogue', 'Archer', 'Thaumaturge', 'Arcanist', 'Monk', 'Dragoon', 'Ninja', 'Bard', 'Machinist', 'Dancer', 
-                  'Black Mage', 'Summoner', 'Red Mage', 'Blue Mage', 'Samurai', 'Reaper', 'Viper'];
-
-  if (healerJobs.includes(job)) {
-    return 'ROLE_HEALER';
-  } else if (tankJobs.includes(job)) {
-    return 'ROLE_TANK';
-  } else if (dpsJobs.includes(job)) {
-    return 'ROLE_ATTACK';
+  // 如果是角色声明为role时使用职能图标
+  if (job === 'TANK' || job === 'HEALER' || job === 'DPS' || 
+      job === 'ROLE_TANK' || job === 'ROLE_HEALER' || job === 'ROLE_ATTACK' || 
+      job === 'ROLE_ALL' || job === 'ROLE_DPS' || job === 'ALL' ||
+      job === 'CRAFTER' || job === 'GATHERER' || job === 'ROLE_CRAFTER' || job === 'ROLE_GATHERER' ||
+      job === '生产职业' || job === '采集职业' || job === 'DoH' || job === 'DoL') {
+    if (job === 'TANK' || job === 'ROLE_TANK') return 'ROLE_TANK';
+    if (job === 'HEALER' || job === 'ROLE_HEALER') return 'ROLE_HEALER';
+    if (job === 'DPS' || job === 'ROLE_DPS' || job === 'ROLE_ATTACK') return 'ROLE_ATTACK';
+    if (job === 'ALL' || job === 'ROLE_ALL') return 'ROLE_ALL';
+    if (job === 'CRAFTER' || job === 'ROLE_CRAFTER' || job === '生产职业' || job === 'DoH') return 'ROLE_CRAFTER';
+    if (job === 'GATHERER' || job === 'ROLE_GATHERER' || job === '采集职业' || job === 'DoL') return 'ROLE_GATHERER';
+    return job;
   }
   
+  // 移除对具体生产/采集职业的判断，让它们使用自己的图标
+  // 这些判断放到getRoleType函数中处理卡片颜色
+  
+  // 如果是职业组字符串，应该在getJobGroupIcon中判断，不在这里处理
+  if (job && (job.includes(' ') || job.includes(','))) {
+    return null;
+  }
+  
+  // 不再自动将单个具体职业转为职能图标
   return null;
 };
 
@@ -286,29 +429,63 @@ const isAllCombatJobs = (jobString) => {
     'CNJ', 'WHM', 'SCH', 'AST', 'SGE',         // 治疗
     'PGL', 'LNC', 'ROG', 'SAM', 'MNK', 'DRG', 'NIN', 'RPR', 'VPR',  // 近战DPS
     'ARC', 'BRD', 'MCH', 'DNC',                // 远程物理DPS
-    'THM', 'ACN', 'BLM', 'SMN', 'RDM', 'BLU'   // 魔法DPS
+    'THM', 'ACN', 'BLM', 'SMN', 'RDM', 'BLU', 'PCT'   // 魔法DPS
   ];
   
-  // 将职业字符串分割为数组并检查是否包含所有战斗职业
-  const jobs = jobString.split(' ').map(job => job.trim());
+  // 将职业字符串分割为数组 - 支持空格和逗号分隔
+  let jobs;
+  if (jobString.includes(',')) {
+    jobs = jobString.split(',').map(job => job.trim());
+  } else {
+    jobs = jobString.split(' ').map(job => job.trim()).filter(job => job !== '');
+  }
+  
+  // 检查特定的职业字符串模式 - 当包含很多战斗职业时直接判定为全部职业
+  if (jobString === "GLA PGL MRD LNC ARC CNJ THM PLD MNK WAR DRG BRD WHM BLM ACN SMN SCH ROG NIN MCH DRK AST SAM RDM BLU GNB DNC RPR SGE VPR PCT") {
+    return true;
+  }
+  
+  // 增加检查，当包含大量基础职业和进阶职业时，也判定为全部职业
+  if (
+    jobString.includes("GLA") && jobString.includes("MRD") && jobString.includes("PGL") && 
+    jobString.includes("LNC") && jobString.includes("ARC") && jobString.includes("CNJ") && 
+    jobString.includes("THM") && jobString.includes("ACN") && jobString.includes("ROG") &&
+    (
+      jobString.includes("PLD") || jobString.includes("WAR") || jobString.includes("MNK") || 
+      jobString.includes("DRG") || jobString.includes("BRD") || jobString.includes("WHM") || 
+      jobString.includes("BLM") || jobString.includes("SMN") || jobString.includes("SCH") || 
+      jobString.includes("NIN")
+    )
+  ) {
+    return true;
+  }
+  
+  // 计算匹配的职业数量
+  const matchedJobs = jobs.filter(job => allCombatJobs.includes(job));
   
   // 检查是否包含至少一个来自每个职能的职业
   const hasTank = jobs.some(job => ['GLA', 'MRD', 'PLD', 'WAR', 'DRK', 'GNB'].includes(job));
   const hasHealer = jobs.some(job => ['CNJ', 'WHM', 'SCH', 'AST', 'SGE'].includes(job));
   const hasMeleeDPS = jobs.some(job => ['PGL', 'LNC', 'ROG', 'SAM', 'MNK', 'DRG', 'NIN', 'RPR', 'VPR'].includes(job));
   const hasRangedDPS = jobs.some(job => ['ARC', 'BRD', 'MCH', 'DNC'].includes(job));
-  const hasMagicDPS = jobs.some(job => ['THM', 'ACN', 'BLM', 'SMN', 'RDM', 'BLU'].includes(job));
+  const hasMagicDPS = jobs.some(job => ['THM', 'ACN', 'BLM', 'SMN', 'RDM', 'BLU', 'PCT'].includes(job));
   
-  // 如果包含所有职能，或者职业数量超过20个，认为是所有战斗职业
+  // 如果包含所有职能，或者匹配的职业数量超过20个，认为是所有战斗职业
   return (hasTank && hasHealer && hasMeleeDPS && hasRangedDPS && hasMagicDPS) || 
-         (jobs.length >= 20 && jobs.some(job => allCombatJobs.includes(job)));
+         (matchedJobs.length >= 20);
 };
 
 // 检查是否包含特定职能的所有职业
 const isAllRoleJobs = (jobString, roleJobs) => {
   if (!jobString) return false;
   
-  const jobs = jobString.split(' ').map(job => job.trim());
+  // 支持空格和逗号分隔
+  let jobs;
+  if (jobString.includes(',')) {
+    jobs = jobString.split(',').map(job => job.trim());
+  } else {
+    jobs = jobString.split(' ').map(job => job.trim());
+  }
   
   // 检查是否包含指定职能的全部职业
   return roleJobs.every(roleJob => jobs.includes(roleJob));
@@ -327,7 +504,7 @@ const getJobGroupIcon = (jobString) => {
   // 远程物理DPS职业组
   const rangedDpsJobs = ['ARC', 'BRD', 'MCH', 'DNC'];
   // 魔法DPS职业组
-  const magicDpsJobs = ['THM', 'ACN', 'BLM', 'SMN', 'RDM', 'BLU'];
+  const magicDpsJobs = ['THM', 'ACN', 'BLM', 'SMN', 'RDM', 'BLU', 'PCT'];
   // 生产职业组
   const crafterJobs = ['CRP', 'BSM', 'ARM', 'GSM', 'LTW', 'WVR', 'ALC', 'CUL'];
   // 采集职业组
@@ -400,14 +577,59 @@ const getCachedImage = (url) => {
 
 // 获取职业图标URL
 const getJobIconUrl = (job) => {
+  // 处理undefined或null
+  if (!job) return null;
+  
+  // 首先检查是否有职业的直接映射
+  // 优先使用具体职业图标
+  if (JOB_ICONS[job]) {
+    return JOB_ICONS[job];
+  }
+  
+  // 如果是生产职业/采集职业的具体职业，直接使用职业图标
+  // 不使用职能图标
+  if (/^(CRP|BSM|ARM|GSM|LTW|WVR|ALC|CUL|MIN|BTN|FSH)$/.test(job)) {
+    // 备注：这里应该已经在上面的if检查中返回了图标
+    // 但为了代码的健壮性，还是保留这个条件，以防万一
+    return JOB_ICONS[job];
+  }
+  
+  // 判断是否是职业组字符串
+  if (job.includes(' ') || job.includes(',')) {
+    // 检查是否包含所有战斗职业
+    if (isAllCombatJobs(job)) {
+      return JOB_ICONS['ROLE_ALL'];
+    }
+    
+    // 检查是否包含特定职能的所有职业
+    const groupIcon = getJobGroupIcon(job);
+    if (groupIcon) {
+      return JOB_ICONS[groupIcon];
+    }
+  }
+  
   // 检查是否需要使用职能图标
   const roleIcon = shouldUseRoleIcon(job);
-  const iconKey = roleIcon || job;
+  if (roleIcon) {
+    return JOB_ICONS[roleIcon];
+  }
   
-  // 获取图标URL
-  const iconUrl = JOB_ICONS[iconKey] || null;
+  // 尝试将职业缩写转为中文名后查找
+  const localizedName = JOB_NAME_MAPPING[job];
+  if (localizedName && JOB_ICONS[localizedName]) {
+    return JOB_ICONS[localizedName];
+  }
   
-  return iconUrl;
+  // 尝试使用职业缩写查找
+  const abbreviation = getJobAbbreviation(job);
+  if (abbreviation && JOB_ICONS[abbreviation]) {
+    return JOB_ICONS[abbreviation];
+  }
+  
+  // 调试输出 - 帮助识别未处理的职业
+  console.debug('未找到图标:', job);
+  
+  return null;
 };
 
 // 图片加载器函数，负责加载并缓存图片
@@ -520,21 +742,44 @@ const JobIcon = ({ job, size = '40px', showTooltip = false, onClick }) => {
   const [imageUrl, setImageUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // 获取职业图标URL
+  // 判断是否是所有战斗职业
+  const isAllJobs = job && (job.includes(',') || job.includes(' ')) && isAllCombatJobs(job);
+  
+  // 获取职业信息
   const iconUrl = getJobIconUrl(job);
+  
+  // 获取职业类型和颜色 - 用于显示颜色条和背景色
   const roleType = getRoleType(job);
   const roleColor = getRoleColor(roleType);
-  const localizedJob = getLocalizedJobName(job);
-  const abbr = getJobAbbreviation(job);
-  const isJobString = job && job.includes(',');
-  const isRole = isRoleName(job) || shouldUseRoleIcon(job) || isJobString;
   
-  let tooltipText = localizedJob;
+  // 判断是否应该显示为角色组
+  const isRoleGroup = isRoleName(job) || shouldUseRoleIcon(job) || 
+                (job && (job.includes(',') || job.includes(' ')));
   
-  // 如果是角色组，尝试使用角色组的中文名称
-  if (isRole && job.startsWith('ROLE_')) {
-    tooltipText = ROLE_NAME_MAPPING[job] || localizedJob;
+  // 设置工具提示文本
+  let tooltipText;
+  
+  // 根据不同情况设置工具提示文本
+  if (isAllJobs) {
+    // 所有职业的情况
+    tooltipText = ROLE_NAME_MAPPING['ROLE_ALL'] || '全部职业';
+  } else if (job && job.startsWith('ROLE_')) {
+    // ROLE_前缀的职能组
+    tooltipText = ROLE_NAME_MAPPING[job] || job.replace('ROLE_', '');
+  } else if (ROLE_NAME_MAPPING[job]) {
+    // 直接是职能名称的情况
+    tooltipText = ROLE_NAME_MAPPING[job];
+  } else {
+    // 单个职业的情况 - 包括生产采集职业
+    const localizedName = getLocalizedJobName(job);
+    tooltipText = localizedName;
   }
+  
+  // 获取显示的缩写
+  const abbr = getJobAbbreviation(job);
+  
+  // 调试日志 - 帮助诊断问题
+  // console.debug(`JobIcon - job: ${job}, roleType: ${roleType}, iconUrl: ${iconUrl}, tooltipText: ${tooltipText}`);
   
   useEffect(() => {
     let isMounted = true;
@@ -553,24 +798,27 @@ const JobIcon = ({ job, size = '40px', showTooltip = false, onClick }) => {
         }
       } catch (error) {
         if (isMounted) {
-          console.error('无法加载职业图标:', error);
+          console.error(`无法加载职业图标(${job}):`, error);
           setIsLoading(false);
         }
       }
     };
     
+    // 重置状态并加载新图标
+    setIsLoading(true);
+    setImageUrl(null);
     loadImage();
     
     return () => {
       isMounted = false;
     };
-  }, [iconUrl]);
+  }, [iconUrl, job]);
   
   return (
     <JobIconContainer className="job-icon-container" onClick={onClick}>
       <IconContainer 
         size={size} 
-        isRole={isRole}
+        isRole={isRoleGroup}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="job-icon-inner"
@@ -578,7 +826,7 @@ const JobIcon = ({ job, size = '40px', showTooltip = false, onClick }) => {
         {isLoading ? (
           <div style={{ backgroundColor: '#333', width: '100%', height: '100%' }}></div>
         ) : imageUrl ? (
-          <JobIconImage src={imageUrl} alt={tooltipText} isRole={isRole} />
+          <JobIconImage src={imageUrl} alt={tooltipText} isRole={isRoleGroup} />
         ) : (
           <div style={{ backgroundColor: roleColor, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <JobIconText size={size}>
@@ -605,12 +853,31 @@ const getLocalizedJobName = (job) => {
 
   // 处理特殊角色名称
   if (job === 'ANY') return '任意职业';
-  if (job === 'TANK') return '坦克职能';
-  if (job === 'HEALER') return '治疗职能';
-  if (job === 'DPS') return '输出职能';
-  if (job === 'MELEE') return '近战职能';
-  if (job === 'RANGED') return '远程职能';
-  if (job === 'CASTER') return '法系职能';
+  
+  // 检测是否是生产职业
+  if (/^(CRP|BSM|ARM|GSM|LTW|WVR|ALC|CUL)$/.test(job)) {
+    const craftMap = {
+      'CRP': '刻木匠',
+      'BSM': '锻铁匠',
+      'ARM': '铸甲匠',
+      'GSM': '雕金匠',
+      'LTW': '制革匠',
+      'WVR': '裁衣匠',
+      'ALC': '炼金术士',
+      'CUL': '烹调师'
+    };
+    return craftMap[job] || job;
+  }
+  
+  // 检测是否是采集职业
+  if (/^(MIN|BTN|FSH)$/.test(job)) {
+    const gatherMap = {
+      'MIN': '采矿工',
+      'BTN': '园艺工',
+      'FSH': '捕鱼人'
+    };
+    return gatherMap[job] || job;
+  }
   
   // 处理ROLE_前缀的角色组
   if (job.startsWith('ROLE_')) {

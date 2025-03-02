@@ -21,6 +21,8 @@
   --tank-color: #3d85c6;
   --healer-color: #6aa84f;
   --dps-color: #cc0000;
+  --crafter-color: #9c27b0; /* 生产职业紫色 */
+  --gatherer-color: #ffc107; /* 采集职业黄色 */
 }
 
 /* 暗色主题 */

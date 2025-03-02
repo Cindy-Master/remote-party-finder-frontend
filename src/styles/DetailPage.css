@@ -38,18 +38,45 @@
 
 .detail-meta {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 15px;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+}
+
+.server-info {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   font-size: 14px;
+  transition: all 0.2s;
+}
+
+.server-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .cross-world-badge {
   display: inline-block;
   background-color: var(--secondary-color);
   color: white;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 4px;
   font-size: 12px;
   margin-left: 10px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.cross-world-badge:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 .detail-info {
@@ -155,6 +182,14 @@
   background-color: var(--dps-color, #cc0000);
 }
 
+.slot-item.role-crafter::before {
+  background-color: var(--crafter-color, #9c27b0);
+}
+
+.slot-item.role-gatherer::before {
+  background-color: var(--gatherer-color, #ffc107);
+}
+
 .slot-header {
   display: flex;
   justify-content: space-between;
@@ -196,6 +231,16 @@
   box-shadow: 0 4px 12px rgba(204, 0, 0, 0.2);
 }
 
+.slot-item.role-crafter {
+  border-left: 5px solid var(--crafter-color, #9c27b0);
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
+}
+
+.slot-item.role-gatherer {
+  border-left: 5px solid var(--gatherer-color, #ffc107);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+}
+
 /* 鼠标悬浮时增强颜色效果 */
 .slot-item.role-tank:hover {
   box-shadow: 0 8px 16px rgba(61, 133, 198, 0.3);
@@ -207,6 +252,14 @@
 
 .slot-item.role-dps:hover {
   box-shadow: 0 8px 16px rgba(204, 0, 0, 0.3);
+}
+
+.slot-item.role-crafter:hover {
+  box-shadow: 0 8px 16px rgba(156, 39, 176, 0.3);
+}
+
+.slot-item.role-gatherer:hover {
+  box-shadow: 0 8px 16px rgba(255, 193, 7, 0.3);
 }
 
 .job-icon-container {
@@ -324,6 +377,15 @@
   .slots-grid {
     grid-template-columns: 1fr;
   }
+  .detail-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .server-info,
+  .time-left {
+    width: 100%;
+  }
 }
 
 .dark-mode .slot-item {
@@ -336,17 +398,96 @@
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* 暗色模式下的角色颜色条增强效果 */
+.dark-mode .slot-item.role-tank {
+  border-left: 5px solid var(--tank-color);
+  box-shadow: 0 4px 12px rgba(61, 133, 198, 0.3);
+}
+
+.dark-mode .slot-item.role-healer {
+  border-left: 5px solid var(--healer-color);
+  box-shadow: 0 4px 12px rgba(106, 168, 79, 0.3);
+}
+
+.dark-mode .slot-item.role-dps {
+  border-left: 5px solid var(--dps-color);
+  box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3);
+}
+
+.dark-mode .slot-item.role-crafter {
+  border-left: 5px solid var(--crafter-color);
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+}
+
+.dark-mode .slot-item.role-gatherer {
+  border-left: 5px solid var(--gatherer-color);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* 暗色模式下鼠标悬浮的增强效果 */
+.dark-mode .slot-item.role-tank:hover {
+  box-shadow: 0 8px 16px rgba(61, 133, 198, 0.4);
+}
+
+.dark-mode .slot-item.role-healer:hover {
+  box-shadow: 0 8px 16px rgba(106, 168, 79, 0.4);
+}
+
+.dark-mode .slot-item.role-dps:hover {
+  box-shadow: 0 8px 16px rgba(204, 0, 0, 0.4);
+}
+
+.dark-mode .slot-item.role-crafter:hover {
+  box-shadow: 0 8px 16px rgba(156, 39, 176, 0.4);
+}
+
+.dark-mode .slot-item.role-gatherer:hover {
+  box-shadow: 0 8px 16px rgba(255, 193, 7, 0.4);
+}
+
 .time-left {
   font-size: 16px;
   color: var(--text-color);
   display: inline-flex;
   align-items: center;
-  margin-right: 20px;
-  position: relative;
-  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.time-left:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .time-left.urgent {
   color: var(--error-color);
   font-weight: bold;
+  background-color: rgba(255, 235, 235, 0.9);
+}
+
+.dark-mode .detail-meta {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .server-info,
+.dark-mode .time-left {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .time-left.urgent {
+  background-color: rgba(229, 57, 53, 0.1);
+}
+
+.detail-header span strong {
+  margin-right: 5px;
+  font-weight: 600;
+}
+
+.detail-header .IconWrapper {
+  margin-right: 8px;
+  color: var(--primary-color);
 }

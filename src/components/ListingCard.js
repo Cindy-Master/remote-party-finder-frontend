@@ -6,6 +6,7 @@ import { FiUsers, FiClock, FiMapPin, FiTag, FiGlobe } from 'react-icons/fi';
 import AnimatedCard from './AnimatedCard';
 import { formatTimeLeft, isUrgentTime } from '../utils/timeUtils';
 import '../styles/ListingCard.css';
+import { CATEGORY_EN_TO_ZH } from '../services/api';
 
 const StyledCard = styled(AnimatedCard)`
   height: 100%;
@@ -48,6 +49,21 @@ const ListingCard = ({ listing }) => {
   
   // 格式化剩余时间
   const formattedTimeLeft = formatTimeLeft(time_left);
+  
+  // 获取类别的中文名称
+  const getCategoryName = (categoryValue) => {
+    if (!categoryValue || categoryValue === 'None') return '无';
+    // 如果API已返回中文名称（包含中文字符）则直接使用
+    if (/[\u4e00-\u9fa5]/.test(categoryValue)) return categoryValue;
+    // 否则尝试翻译
+    return CATEGORY_EN_TO_ZH[categoryValue] || categoryValue;
+  };
+
+  // 格式化任务名称
+  const getDutyName = (dutyValue) => {
+    if (!dutyValue || dutyValue === 'None' || dutyValue === '无') return '未指定';
+    return dutyValue;
+  };
 
   return (
     <StyledCard>
@@ -66,8 +82,15 @@ const ListingCard = ({ listing }) => {
             <IconWrapper>
               <FiMapPin />
             </IconWrapper>
-            <span className="info-label">服务器：</span>
+            <span className="info-label">所属服务器：</span>
             <span>{home_world}</span>
+          </p>
+          <p>
+            <IconWrapper>
+              <FiMapPin />
+            </IconWrapper>
+            <span className="info-label">创建服务器：</span>
+            <span>{created_world}</span>
             {is_cross_world && 
               <motion.span 
                 className="cross-world-tag"
@@ -90,11 +113,11 @@ const ListingCard = ({ listing }) => {
               <FiTag />
             </IconWrapper>
             <span className="info-label">类别：</span>
-            <span>{category === 'None' ? '无' : category}</span>
+            <span>{getCategoryName(category)}</span>
           </p>
           <p>
             <span className="info-label">任务：</span>
-            <span>{duty === '无' ? '未指定' : duty}</span>
+            <span>{getDutyName(duty)}</span>
           </p>
           {description && (
             <div className="listing-description">

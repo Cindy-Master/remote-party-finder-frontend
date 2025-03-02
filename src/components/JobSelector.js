@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheck, FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi';
@@ -70,18 +71,15 @@ const PlaceholderText = styled.span`
   color: var(--text-secondary);
 `;
 
+// 修改后的 DropdownMenu 不再使用 position:absolute，而是由 portal 以 fixed 定位
 const DropdownMenu = styled(motion.div)`
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  width: 100%;
   background-color: var(--card-bg-dark, #202020);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
   max-height: 400px;
   overflow-y: auto;
-  z-index: 100;
+  z-index: 1000;
   padding: 15px;
 `;
 
@@ -93,6 +91,8 @@ const JobFilterTabs = styled.div`
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
 `;
+
+/* 以下 FilterTab、JobsGrid、JobItem、SelectAllButton、SelectedBadge 等样式不变 */
 
 const FilterTab = styled.div`
   position: relative;
@@ -207,21 +207,17 @@ const SelectedBadge = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 `;
 
-// 定义职业组和其包含的职业
+// 假定 JOB_GROUPS 和 ROLE_NAME_MAPPING 定义与原来一致
 const JOB_GROUPS = {
-  '坦克': ['骑士', '战士', '暗黑骑士', '绝枪战士'],
-  '治疗': ['白魔法师', '学者', '占星术士', '贤者'],
-  '近战DPS': ['武僧', '龙骑士', '武士', '忍者', '钐镰客', '蝰蛇剑士'],
-  '远程物理DPS': ['诗人', '机工士', '舞者'],
-  '远程魔法DPS': ['黑魔法师', '召唤师', '赤魔法师', '青魔法师', '绘灵法师'],
+  '坦克': ['骑士', '战士', '暗黑骑士', '绝枪战士', '剑术师', '斧术师'],
+  '治疗': ['白魔法师', '学者', '占星术士', '贤者', '幻术师'],
+  '近战DPS': ['武僧', '龙骑士', '武士', '忍者', '钐镰客', '蝰蛇剑士', '格斗家', '枪术师', '双剑师'],
+  '远程物理DPS': ['诗人', '机工士', '舞者', '弓箭手'],
+  '远程魔法DPS': ['黑魔法师', '召唤师', '赤魔法师', '青魔法师', '绘灵法师', '咒术师', '秘术师'],
   '生产': ['刻木匠', '锻铁匠', '铸甲匠', '雕金匠', '制革匠', '裁衣匠', '炼金术士', '烹调师'],
   '采集': ['采矿工', '园艺工', '捕鱼人']
 };
 
-// 获取所有职业列表
-const ALL_JOBS = Object.values(JOB_GROUPS).flat();
-
-// 在定义JOB_GROUPS之前添加这个角色名称映射
 const ROLE_NAME_MAPPING = {
   '全部': '全部职业',
   '坦克': '坦克职能',
@@ -233,14 +229,32 @@ const ROLE_NAME_MAPPING = {
   '采集': '采集职业'
 };
 
+// 获取所有职业列表
+const ALL_JOBS = Object.values(JOB_GROUPS).flat();
+
 const JobSelector = ({ onChange, value = [], label = "职业" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedJobs, setSelectedJobs] = useState(value);
   const [activeFilter, setActiveFilter] = useState('全部');
+  // 用于定位下拉头，进而计算下拉菜单位置
+  const headerRef = useRef(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    if (isOpen && headerRef.current) {
+      const rect = headerRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      });
+    }
+  }, [isOpen]);
 
   const handleJobClick = (job) => {
     const updatedJobs = selectedJobs.includes(job)
@@ -271,13 +285,11 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
     onChange && onChange(updatedJobs);
   };
 
-  // 检查一个组是否全部选中
   const isGroupAllSelected = (group) => {
     const groupJobs = group === '全部' ? ALL_JOBS : JOB_GROUPS[group];
     return groupJobs.every(job => selectedJobs.includes(job));
   };
 
-  // 获取要显示的职业列表
   const getJobsToDisplay = () => {
     if (activeFilter === '全部') {
       return ALL_JOBS;
@@ -289,7 +301,7 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
     <Container className="job-selector">
       <Label>{label}</Label>
       <DropdownContainer>
-        <DropdownHeader onClick={toggleDropdown}>
+        <DropdownHeader onClick={toggleDropdown} ref={headerRef}>
           <SelectedJobsDisplay>
             {selectedJobs.length === 0 ? (
               <PlaceholderText>选择职业...</PlaceholderText>
@@ -316,14 +328,20 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
           {isOpen ? <FiChevronUp /> : <FiChevronDown />}
         </DropdownHeader>
         
-        <AnimatePresence>
-          {isOpen && (
+        {isOpen && createPortal(
+          <AnimatePresence>
             <DropdownMenu
               className="job-selector-dropdown"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
+              style={{
+                position: 'fixed',
+                top: dropdownPosition.top + dropdownPosition.height + 8,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+              }}
             >
               <JobFilterTabs className="job-filter-tabs">
                 <FilterTab 
@@ -376,11 +394,12 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
                 ))}
               </JobsGrid>
             </DropdownMenu>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>,
+          document.body
+        )}
       </DropdownContainer>
     </Container>
   );
 };
 
-export default JobSelector; 
+export default JobSelector;

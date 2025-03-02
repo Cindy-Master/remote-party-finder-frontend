@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'https://xivpf.littlenightmare.top/api';
 
 // 中文类别名称到英文的映射
-const CATEGORY_ZH_TO_EN = {
+export const CATEGORY_ZH_TO_EN = {
   '随机任务': 'DutyRoulette',
   '迷宫挑战': 'Dungeons',
   '行会令': 'Guildhests',
@@ -23,7 +23,7 @@ const CATEGORY_ZH_TO_EN = {
 };
 
 // 英文类别名称到中文的映射
-const CATEGORY_EN_TO_ZH = {
+export const CATEGORY_EN_TO_ZH = {
   'DutyRoulette': '随机任务',
   'Dungeons': '迷宫挑战',
   'Guildhests': '行会令',

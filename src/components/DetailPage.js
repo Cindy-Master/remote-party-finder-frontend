@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { FiArrowLeft, FiClock, FiInfo, FiUsers, FiTarget, FiList, FiAward } from 'react-icons/fi';
+import { FiArrowLeft, FiClock, FiInfo, FiUsers, FiList, FiMapPin } from 'react-icons/fi';
 import { getListingDetails } from '../services/api';
 import LoadingSpinner from './LoadingSpinner';
 import JobIcon from './JobIcon';
@@ -24,6 +24,38 @@ const BackButton = styled(motion.div)`
   
   svg {
     margin-right: 8px;
+  }
+`;
+
+// 用于包裹"剩余时间"、"所属服务器"、"创建服务器"的容器
+const MetaInfoContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+  gap: 20px;
+`;
+
+// 每一项信息的样式
+const MetaInfoItem = styled.div`
+  background: var(--meta-bg, #f9f9f9);
+  border-radius: 8px;
+  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  color: var(--text-color);
+
+  svg {
+    margin-right: 8px;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+  }
+  
+  strong {
+    margin-right: 5px;
   }
 `;
 
@@ -126,7 +158,26 @@ const DetailPage = () => {
       case 'Physical Ranged DPS':
       case 'Magical Ranged DPS':
         return 'role-dps';
+      case 'CRAFTER':
+      case 'Crafter':
+      case 'DoH':
+      case '生产职业':
+      case 'ROLE_CRAFTER':
+        return 'role-crafter';
+      case 'GATHERER':
+      case 'Gatherer':
+      case 'DoL':
+      case '采集职业':
+      case 'ROLE_GATHERER':
+        return 'role-gatherer';
       default:
+        // 尝试根据职业名称判断类型
+        if (/^(CRP|BSM|ARM|GSM|LTW|WVR|ALC|CUL|刻木匠|锻铁匠|铸甲匠|雕金匠|制革匠|裁衣匠|炼金术士|烹调师)$/.test(role)) {
+          return 'role-crafter';
+        }
+        if (/^(MIN|BTN|FSH|采矿工|园艺工|捕鱼人)$/.test(role)) {
+          return 'role-gatherer';
+        }
         return '';
     }
   };
@@ -137,10 +188,8 @@ const DetailPage = () => {
     return jobString.split(',').map(job => job.trim());
   };
 
-  // 添加辅助函数来获取本地化的职业名称 
+  // 获取本地化的职业名称
   const getLocalizedJobName = (job) => {
-    // 使用JobIcon组件中定义的JOB_NAME_MAPPING（需要确保它是可访问的）
-    // 简化处理：这里我们仅处理一些常见的特殊情况
     if (job === 'ANY') return '任意职业';
     if (job === 'TANK') return '坦克职能';
     if (job === 'HEALER') return '治疗职能';
@@ -148,12 +197,9 @@ const DetailPage = () => {
     if (job === 'MELEE') return '近战职能';
     if (job === 'RANGED') return '远程职能';
     if (job === 'CASTER') return '法系职能';
-    
-    // 对于其他情况，直接返回原始职业名
     return job;
   };
 
-  // 格式化剩余时间
   const formattedTimeLeft = formatTimeLeft(listing.time_left);
   const isUrgent = isUrgentTime(listing.time_left);
 
@@ -190,24 +236,38 @@ const DetailPage = () => {
           custom={2}
         >
           <h1>{listing.name}</h1>
-          <div className="detail-meta">
-            <span className={`time-left ${isUrgent ? 'urgent' : ''}`}>
-              <IconWrapper><FiClock /></IconWrapper>
-              剩余时间: {formattedTimeLeft}
-            </span>
-            <span className="server-info">
-              {listing.home_world} ({listing.datacenter})
+          {/* 新的美观布局 */}
+          <MetaInfoContainer>
+            <MetaInfoItem className={isUrgent ? 'urgent' : ''}>
+              <FiClock />
+              <strong>剩余时间:</strong> {formattedTimeLeft}
+            </MetaInfoItem>
+            <MetaInfoItem>
+              <FiMapPin />
+              <strong>所属服务器:</strong> {listing.home_world} ({listing.datacenter})
+            </MetaInfoItem>
+            <MetaInfoItem>
+              <FiMapPin />
+              <strong>创建服务器:</strong> {listing.created_world}
               {listing.is_cross_world && (
                 <motion.span 
                   className="cross-world-badge"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  style={{
+                    marginLeft: '8px',
+                    fontSize: '0.9rem',
+                    background: '#FFA500',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    color: '#fff'
+                  }}
                 >
                   跨服招募
                 </motion.span>
               )}
-            </span>
-          </div>
+            </MetaInfoItem>
+          </MetaInfoContainer>
         </motion.div>
 
         <div className="detail-info">
@@ -323,7 +383,7 @@ const DetailPage = () => {
                 custom={16}
                 whileHover={{ y: -3, boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)" }}
               >
-                <span className="info-label">拾取规则：</span>
+                <span className="info-label">分配规则：</span>
                 <span>{listing.loot_rules === 'NONE' ? '无' : listing.loot_rules}</span>
               </motion.div>
             </div>
@@ -339,39 +399,49 @@ const DetailPage = () => {
               成员配置
             </h2>
             <div className="slots-grid">
-              {listing.slots.map((slot, index) => (
-                <motion.div
-                  key={index}
-                  className={`slot-item ${slot.filled ? 'filled' : 'empty'} ${getRoleColor(slot.role)}`}
-                  variants={fadeIn}
-                  custom={18 + index * 0.5}
-                  whileHover={{ 
-                    y: -5, 
-                    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)"
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
-                  <div className="slot-header">
-                    <span className="slot-number">#{index + 1}</span>
-                    <span className="slot-status">{slot.filled ? '已加入' : '空'}</span>
-                  </div>
-                  
-                  {slot.filled ? (
-                    <div className="job-info">
-                      <JobIcon job={slot.job} size="50px" showTooltip={true} />
+              {listing.slots.map((slot, index) => {
+                // 根据slot.job判断职业类型
+                let roleClass = getRoleColor(slot.role);
+                
+                // 如果没有获取到职业类型，则尝试从job中判断
+                if (!roleClass && slot.job) {
+                  roleClass = getRoleColor(slot.job);
+                }
+                
+                return (
+                  <motion.div
+                    key={index}
+                    className={`slot-item ${slot.filled ? 'filled' : 'empty'} ${roleClass}`}
+                    variants={fadeIn}
+                    custom={18 + index * 0.5}
+                    whileHover={{ 
+                      y: -5, 
+                      boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)"
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                    <div className="slot-header">
+                      <span className="slot-number">#{index + 1}</span>
+                      <span className="slot-status">{slot.filled ? '已加入' : '空'}</span>
                     </div>
-                  ) : (
-                    <div className="available-jobs">
-                      <span className="available-label">可选职业：</span>
-                      <JobsContainer>
-                        {parseJobString(slot.job).map((job, idx) => (
-                          <JobIcon key={idx} job={job} size="40px" showTooltip={true} />
-                        ))}
-                      </JobsContainer>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+                    
+                    {slot.filled ? (
+                      <div className="job-info">
+                        <JobIcon job={slot.job} size="50px" showTooltip={true} />
+                      </div>
+                    ) : (
+                      <div className="available-jobs">
+                        <span className="available-label">可选职业：</span>
+                        <JobsContainer>
+                          {parseJobString(slot.job).map((job, idx) => (
+                            <JobIcon key={idx} job={job} size="40px" showTooltip={true} />
+                          ))}
+                        </JobsContainer>
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
@@ -380,4 +450,4 @@ const DetailPage = () => {
   );
 };
 
-export default DetailPage; 
+export default DetailPage;
