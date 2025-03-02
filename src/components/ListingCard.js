@@ -33,6 +33,7 @@ const ListingCard = ({ listing }) => {
     name,
     category,
     duty,
+    home_world,
     created_world,
     datacenter,
     slots_filled,
@@ -66,7 +67,7 @@ const ListingCard = ({ listing }) => {
               <FiMapPin />
             </IconWrapper>
             <span className="info-label">服务器：</span>
-            <span>{created_world}</span>
+            <span>{home_world}</span>
             {is_cross_world && 
               <motion.span 
                 className="cross-world-tag"

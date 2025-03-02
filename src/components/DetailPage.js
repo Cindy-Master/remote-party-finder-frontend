@@ -196,7 +196,7 @@ const DetailPage = () => {
               剩余时间: {formattedTimeLeft}
             </span>
             <span className="server-info">
-              {listing.created_world} ({listing.datacenter})
+              {listing.home_world} ({listing.datacenter})
               {listing.is_cross_world && (
                 <motion.span 
                   className="cross-world-badge"
