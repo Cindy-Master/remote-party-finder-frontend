@@ -108,16 +108,21 @@ const ButtonGroup = styled(motion.div)`
   margin-top: 20px;
 `;
 
-const SearchFilter = ({ onSearch }) => {
+const SearchFilter = ({ onSearch, initialFilters = {} }) => {
   const { isDarkMode } = useTheme();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialFilters.query || '');
   const [filters, setFilters] = useState({
-    server: '',
-    datacenter: '',
-    category: '',
-    jobs: [],
+    server: initialFilters.server || '',
+    datacenter: initialFilters.datacenter || '',
+    category: initialFilters.category || '',
+    jobs: initialFilters.jobs || [],
   });
-  const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [filtersExpanded, setFiltersExpanded] = useState(
+    // 如果有任何初始过滤条件，则展开过滤器
+    Object.values(initialFilters).some(value => 
+      value && (Array.isArray(value) ? value.length > 0 : true)
+    )
+  );
   
   // 国服大区
   const datacenters = ['陆行鸟', '莫古力', '猫小胖', '豆豆柴'];

@@ -6,6 +6,7 @@ import SearchFilter from './SearchFilter';
 import Pagination from './Pagination';
 import LoadingSpinner from './LoadingSpinner';
 import { useTheme } from '../contexts/ThemeContext';
+import { useListings } from '../contexts/ListingsContext';
 import '../styles/HomePage.css';
 
 const containerVariants = {
@@ -34,21 +35,26 @@ const headerVariants = {
 
 const HomePage = () => {
   const { isDarkMode } = useTheme();
-  const [listings, setListings] = useState([]);
-  const [pagination, setPagination] = useState({
-    total: 0,
-    page: 1,
-    per_page: 20,
-    total_pages: 0
-  });
-  const [loading, setLoading] = useState(true);
+  const {
+    listings,
+    pagination,
+    filters,
+    hasLoadedData,
+    updateListings,
+    updateFilters,
+    updatePage
+  } = useListings();
+  
+  const [loading, setLoading] = useState(!hasLoadedData);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({});
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(!hasLoadedData);
 
   useEffect(() => {
-    fetchListings();
-  }, [pagination.page, filters]);
+    // 如果还没有加载过数据，或者筛选条件/页码变化，则获取数据
+    if (!hasLoadedData || pagination.page !== 1) {
+      fetchListings();
+    }
+  }, [pagination.page, filters, hasLoadedData]);
 
   const fetchListings = async () => {
     setLoading(true);
@@ -66,8 +72,7 @@ const HomePage = () => {
       );
 
       const data = await getListings(params);
-      setListings(data.data);
-      setPagination(data.pagination);
+      updateListings(data.data, data.pagination);
       setError(null);
       // 首次加载后关闭标志，后续刷新不会重新触发入场动画
       if (isFirstLoad) setIsFirstLoad(false);
@@ -80,13 +85,13 @@ const HomePage = () => {
   };
 
   const handleSearch = (searchFilters) => {
-    // 搜索时重置页码
-    setPagination(prev => ({ ...prev, page: 1 }));
-    setFilters(searchFilters);
+    // 搜索时重置页码并更新筛选条件
+    updatePage(1);
+    updateFilters(searchFilters);
   };
 
   const handlePageChange = (page) => {
-    setPagination(prev => ({ ...prev, page }));
+    updatePage(page);
     // 翻页时滚动到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -112,7 +117,7 @@ const HomePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <SearchFilter onSearch={handleSearch} />
+          <SearchFilter onSearch={handleSearch} initialFilters={filters} />
         </motion.div>
 
         {loading ? (

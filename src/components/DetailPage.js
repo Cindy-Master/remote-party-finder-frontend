@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { FiArrowLeft, FiClock, FiInfo, FiUsers, FiList, FiMapPin } from 'react-icons/fi';
@@ -21,9 +21,15 @@ const BackButton = styled(motion.div)`
   display: inline-flex;
   align-items: center;
   cursor: pointer;
+  color: var(--primary-color);
+  font-size: 16px;
   
   svg {
     margin-right: 8px;
+  }
+  
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
@@ -84,6 +90,7 @@ const fadeIn = {
 const DetailPage = () => {
   const { id } = useParams();
   const { isDarkMode } = useTheme();
+  const navigate = useNavigate();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -100,10 +107,15 @@ const DetailPage = () => {
       setError(null);
     } catch (err) {
       console.error(`获取招募ID ${id} 的详情失败:`, err);
-      setError('获取招募信息详情时发生错误，请稍后再试。');
+      setError('此招募已不存在');
     } finally {
       setLoading(false);
     }
+  };
+
+  // 返回到上一页，而不是直接跳转到首页
+  const handleGoBack = () => {
+    navigate(-1);
   };
 
   if (loading) {
@@ -123,7 +135,7 @@ const DetailPage = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="error-message">{error}</div>
-        <Link to="/" className="back-link">返回首页</Link>
+        <button onClick={handleGoBack} className="back-link">返回</button>
       </motion.div>
     );
   }
@@ -138,7 +150,7 @@ const DetailPage = () => {
       >
         <h2>招募不存在</h2>
         <p>无法找到ID为 {id} 的招募信息</p>
-        <Link to="/" className="back-link">返回首页</Link>
+        <button onClick={handleGoBack} className="back-link">返回</button>
       </motion.div>
     );
   }
@@ -218,10 +230,9 @@ const DetailPage = () => {
         <BackButton 
           whileHover={{ x: -5 }}
           whileTap={{ scale: 0.95 }}
+          onClick={handleGoBack}
         >
-          <Link to="/" className="back-link">
-            <FiArrowLeft /> 返回列表
-          </Link>
+          <FiArrowLeft /> 返回列表
         </BackButton>
       </motion.div>
 

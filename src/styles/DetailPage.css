@@ -348,6 +348,26 @@
   font-size: 18px;
 }
 
+.error-container .back-link, .not-found .back-link {
+  color: #fff;
+  background-color: var(--primary-color);
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.error-container .back-link:hover, .not-found .back-link:hover {
+  background-color: var(--primary-dark);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
 .not-found h2 {
   color: var(--error-color);
   margin-bottom: 15px;
