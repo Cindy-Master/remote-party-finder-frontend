@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getListings } from '../services/api';
 import ListingCard from './ListingCard';
@@ -48,22 +48,40 @@ const HomePage = () => {
   const [loading, setLoading] = useState(!hasLoadedData);
   const [error, setError] = useState(null);
   const [isFirstLoad, setIsFirstLoad] = useState(!hasLoadedData);
+  const isManualSearchRef = useRef(false);
 
   useEffect(() => {
-    // 如果还没有加载过数据，或者筛选条件/页码变化，则获取数据
-    if (!hasLoadedData || pagination.page !== 1) {
+    // 只在首次加载时获取数据
+    const isInitialMount = !hasLoadedData;
+    if (isInitialMount) {
+      console.log("初始加载数据");
       fetchListings();
     }
-  }, [pagination.page, filters, hasLoadedData]);
+  }, []);  // 移除依赖，仅在组件挂载时执行一次
+
+  // 单独监听筛选条件和页码变化，防止重复请求
+  useEffect(() => {
+    // 如果是手动搜索触发的更新，跳过这次useEffect的执行
+    if (hasLoadedData && !isManualSearchRef.current) {  
+      console.log("筛选条件或页码变化，重新加载数据");
+      fetchListings();
+    }
+    // 重置手动搜索标志
+    isManualSearchRef.current = false;
+  }, [pagination.page, JSON.stringify(filters)]);  // 使用JSON.stringify确保对象比较
 
   const fetchListings = async () => {
     setLoading(true);
     try {
+      // 获取最新的filters和pagination状态
+      const currentFilters = filters;
+      const currentPage = pagination.page;
+      
       // 构建API请求参数
       const params = {
-        page: pagination.page,
+        page: currentPage,
         per_page: pagination.per_page,
-        ...filters
+        ...currentFilters
       };
       
       // 清理空字符串的过滤条件
@@ -71,6 +89,7 @@ const HomePage = () => {
         params[key] === '' && delete params[key]
       );
 
+      console.log("API请求参数:", params);
       const data = await getListings(params);
       updateListings(data.data, data.pagination);
       setError(null);
@@ -85,9 +104,14 @@ const HomePage = () => {
   };
 
   const handleSearch = (searchFilters) => {
-    // 搜索时重置页码并更新筛选条件
+    // 搜索时更新筛选条件并立即触发数据加载
+    console.log("搜索条件:", searchFilters);
     updatePage(1);
     updateFilters(searchFilters);
+    // 设置手动搜索标志，防止useEffect再次触发请求
+    isManualSearchRef.current = true;
+    // 直接调用fetchListings，确保搜索按钮点击时立即发送请求
+    fetchListings();
   };
 
   const handlePageChange = (page) => {

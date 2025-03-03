@@ -163,6 +163,7 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
   };
   
   const handleSearch = () => {
+    console.log("提交搜索条件:", { query, ...filters });
     onSearch({ query, ...filters });
   };
   
@@ -201,26 +202,36 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <SearchBox isDarkMode={isDarkMode}>
-        <SearchIcon isDarkMode={isDarkMode}>
-          <FiSearch />
-        </SearchIcon>
-        <input
-          type="text"
-          placeholder="搜索招募信息..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-        />
-        <ClearButton 
-          isDarkMode={isDarkMode}
-          show={query.length > 0}
-          onClick={clearSearch}
-          whileTap={{ scale: 0.9 }}
+      <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+        <SearchBox isDarkMode={isDarkMode} style={{ flex: 1, marginBottom: 0 }}>
+          <SearchIcon isDarkMode={isDarkMode}>
+            <FiSearch />
+          </SearchIcon>
+          <input
+            type="text"
+            placeholder="搜索招募信息..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <ClearButton 
+            isDarkMode={isDarkMode}
+            show={query.length > 0}
+            onClick={clearSearch}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FiX />
+          </ClearButton>
+        </SearchBox>
+        
+        <AnimatedButton 
+          variant="primary"
+          onClick={() => handleSearch()}
+          iconRight={<FiSearch />}
         >
-          <FiX />
-        </ClearButton>
-      </SearchBox>
+          搜索
+        </AnimatedButton>
+      </div>
       
       <FilterHeader onClick={toggleFilters}>
         <motion.h3
@@ -303,18 +314,10 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
           >
             <AnimatedButton 
               variant="outline"
-              onClick={clearFilters}
+              onClick={() => clearFilters()}
               iconLeft={<FiX />}
             >
               清除筛选
-            </AnimatedButton>
-            
-            <AnimatedButton 
-              variant="primary"
-              onClick={handleSearch}
-              iconRight={<FiSearch />}
-            >
-              搜索
             </AnimatedButton>
           </ButtonGroup>
         </FilterSection>

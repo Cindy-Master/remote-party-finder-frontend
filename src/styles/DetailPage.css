@@ -348,7 +348,9 @@
   font-size: 18px;
 }
 
-.error-container .back-link, .not-found .back-link {
+/* 将样式特定化为DetailPage中的按钮 */
+.error-container button.back-link, 
+.not-found button.back-link {
   color: #fff;
   background-color: var(--primary-color);
   padding: 8px 20px;
@@ -361,7 +363,8 @@
   transition: all 0.3s ease;
 }
 
-.error-container .back-link:hover, .not-found .back-link:hover {
+.error-container button.back-link:hover, 
+.not-found button.back-link:hover {
   background-color: var(--primary-dark);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   text-decoration: none;

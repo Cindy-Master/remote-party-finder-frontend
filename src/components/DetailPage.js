@@ -63,6 +63,19 @@ const MetaInfoItem = styled.div`
   strong {
     margin-right: 5px;
   }
+  
+  /* 黑夜模式下提高对比度 */
+  .dark-mode & {
+    background: rgba(25, 25, 25, 0.8);
+    color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* 黑夜模式下紧急提示样式 */
+  .dark-mode &.urgent {
+    background: rgba(229, 57, 53, 0.2);
+    color: rgba(255, 255, 255, 0.95);
+  }
 `;
 
 const JobsContainer = styled.div`

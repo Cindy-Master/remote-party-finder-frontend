@@ -88,7 +88,8 @@ a:hover {
   color: var(--primary-dark);
 }
 
-button {
+/* 修改全局按钮样式，增加排除条件 */
+button:not([class*="sc-"]):not(.back-link):not([class*="motion"]) {
   cursor: pointer;
   border: none;
   background-color: var(--primary-color);
@@ -101,13 +102,13 @@ button {
               box-shadow var(--transition-speed);
 }
 
-button:hover {
+button:not([class*="sc-"]):not(.back-link):not([class*="motion"]):hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-button:active {
+button:not([class*="sc-"]):not(.back-link):not([class*="motion"]):active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
