@@ -6,6 +6,7 @@ import { FiCheck, FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi';
 import JobIcon from './JobIcon';
 import '../styles/JobIcon.css';
 import '../styles/JobSelector.css';
+import { getJobIdByName, getJobById } from '../utils/jobData';
 
 // 职能图标常量
 const ROLE_ICONS = {
@@ -227,9 +228,10 @@ const ROLE_NAME_MAPPING = {
 };
 
 const ALL_JOBS = Object.values(JOB_GROUPS).flat();
+
 const JobSelector = ({ onChange, value = [], label = "职业" }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedJobs, setSelectedJobs] = useState(value);
+  const [selectedJobs, setSelectedJobs] = useState([]);
   const [activeFilter, setActiveFilter] = useState('全部');
   const headerRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -237,7 +239,22 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
 
   // 当外部传入的 value 变化时，同步内部状态（受控组件）
   useEffect(() => {
-    setSelectedJobs(value);
+    // 检查 value 是否为数字数组（职业ID）或字符串数组（职业名称）
+    if (value.length > 0) {
+      if (typeof value[0] === 'number') {
+        // 如果是职业ID数组，转换为职业名称数组
+        const jobNames = value.map(id => {
+          const job = getJobById(id);
+          return job ? job.name : null;
+        }).filter(Boolean);
+        setSelectedJobs(jobNames);
+      } else {
+        // 如果是职业名称数组，直接使用
+        setSelectedJobs(value);
+      }
+    } else {
+      setSelectedJobs([]);
+    }
   }, [value]);
 
   const toggleDropdown = () => {
@@ -292,20 +309,29 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
       ? selectedJobs.filter(j => j !== job)
       : [...selectedJobs, job];
     setSelectedJobs(updatedJobs);
-    onChange && onChange(updatedJobs);
+    if (onChange) {
+      const jobIds = updatedJobs.map(jobName => getJobIdByName(jobName));
+      onChange(jobIds);
+    }
   };
 
   const handleRemoveJob = (job) => {
     const updatedJobs = selectedJobs.filter(j => j !== job);
     setSelectedJobs(updatedJobs);
-    onChange && onChange(updatedJobs);
+    if (onChange) {
+      const jobIds = updatedJobs.map(jobName => getJobIdByName(jobName));
+      onChange(jobIds);
+    }
   };
 
   const selectAllInGroup = (group) => {
     const groupJobs = group === '全部' ? ALL_JOBS : JOB_GROUPS[group];
     const updatedJobs = [...new Set([...selectedJobs, ...groupJobs])];
     setSelectedJobs(updatedJobs);
-    onChange && onChange(updatedJobs);
+    if (onChange) {
+      const jobIds = updatedJobs.map(jobName => getJobIdByName(jobName));
+      onChange(jobIds);
+    }
   };
 
   // 修改清除操作：不论是否全选，只要当前组中有选中项，点击就清除当前组选项
@@ -313,7 +339,10 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
     const groupJobs = group === '全部' ? ALL_JOBS : JOB_GROUPS[group];
     const updatedJobs = selectedJobs.filter(job => !groupJobs.includes(job));
     setSelectedJobs(updatedJobs);
-    onChange && onChange(updatedJobs);
+    if (onChange) {
+      const jobIds = updatedJobs.map(jobName => getJobIdByName(jobName));
+      onChange(jobIds);
+    }
   };
 
   // 计算当前组中被选中的数量
@@ -325,7 +354,7 @@ const JobSelector = ({ onChange, value = [], label = "职业" }) => {
     return JOB_GROUPS[activeFilter] || [];
   };
 
-  // 按钮文案：如果当前组中有选中项则显示“清除筛选”，否则显示“全选”
+  // 按钮文案：如果当前组中有选中项则显示"清除筛选"，否则显示"全选"
   const buttonLabel = groupSelectedCount > 0 ? '清除筛选' : '全选';
   const buttonIcon = groupSelectedCount > 0 ? <FiX size={14} /> : <FiCheck size={14} />;
 
