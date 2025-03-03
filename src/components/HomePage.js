@@ -70,6 +70,50 @@ const HomePage = () => {
     isManualSearchRef.current = false;
   }, [pagination.page, JSON.stringify(filters)]);  // 使用JSON.stringify确保对象比较
 
+  const handleSearch = (searchFilters) => {
+    // 搜索时更新筛选条件并立即触发数据加载
+    console.log("搜索条件:", searchFilters);
+    updatePage(1);
+    updateFilters(searchFilters);
+    // 设置手动搜索标志，防止useEffect再次触发请求
+    isManualSearchRef.current = true;
+    // 使用最新的搜索条件直接调用fetchListings
+    fetchListingsWithFilters(searchFilters);
+  };
+
+  // 新增：使用指定筛选条件的获取函数
+  const fetchListingsWithFilters = async (specificFilters) => {
+    setLoading(true);
+    try {
+      // 使用传入的筛选条件，而不是从状态中获取
+      const currentPage = pagination.page;
+      
+      // 构建API请求参数
+      const params = {
+        page: currentPage,
+        per_page: pagination.per_page,
+        ...specificFilters
+      };
+      
+      // 清理空字符串的过滤条件
+      Object.keys(params).forEach(key => 
+        params[key] === '' && delete params[key]
+      );
+
+      console.log("API请求参数:", params);
+      const data = await getListings(params);
+      updateListings(data.data, data.pagination);
+      setError(null);
+      // 首次加载后关闭标志，后续刷新不会重新触发入场动画
+      if (isFirstLoad) setIsFirstLoad(false);
+    } catch (err) {
+      console.error('获取招募列表失败:', err);
+      setError('获取招募信息时发生错误，请稍后再试。');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const fetchListings = async () => {
     setLoading(true);
     try {
@@ -101,17 +145,6 @@ const HomePage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSearch = (searchFilters) => {
-    // 搜索时更新筛选条件并立即触发数据加载
-    console.log("搜索条件:", searchFilters);
-    updatePage(1);
-    updateFilters(searchFilters);
-    // 设置手动搜索标志，防止useEffect再次触发请求
-    isManualSearchRef.current = true;
-    // 直接调用fetchListings，确保搜索按钮点击时立即发送请求
-    fetchListings();
   };
 
   const handlePageChange = (page) => {
