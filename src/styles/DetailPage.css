@@ -25,6 +25,12 @@
   overflow: hidden;
 }
 
+/* 黑夜模式下的详情卡片样式 */
+.dark-mode .detail-card {
+  background-color: rgba(22, 22, 22, 0.95);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
 .detail-header {
   background-color: var(--primary-color);
   color: white;
@@ -81,6 +87,17 @@
 
 .detail-info {
   padding: 30px;
+}
+
+/* 黑夜模式下的详情信息样式 */
+.dark-mode .detail-info {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 黑夜模式下的标题样式 */
+.dark-mode .info-section h2 {
+  color: var(--primary-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .info-section {
@@ -513,4 +530,44 @@
 .detail-header .IconWrapper {
   margin-right: 8px;
   color: var(--primary-color);
+}
+
+/* 招募信息详情项暗色模式样式 */
+.dark-mode .info-item {
+  background-color: rgba(30, 30, 30, 0.8);
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .info-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+}
+
+/* 招募说明暗色模式样式 */
+.dark-mode .description-item {
+  background-color: rgba(30, 30, 30, 0.8);
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .description-content {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* 条件信息暗色模式样式 */
+.dark-mode .condition-item {
+  background-color: rgba(30, 30, 30, 0.8);
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .condition-item:hover {
+  background-color: rgba(40, 40, 40, 0.85);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .info-item:hover {
+  background-color: rgba(40, 40, 40, 0.85);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
