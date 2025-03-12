@@ -39,10 +39,10 @@ const JOB_NAME_MAPPING = {
   'Viper': '蝰蛇剑士',
   
   // 远程物理DPS
-  'BRD': '诗人',
+  'BRD': '吟游诗人',
   'MCH': '机工士',
   'DNC': '舞者',
-  'Bard': '诗人',
+  'Bard': '吟游诗人',
   'Machinist': '机工士',
   'Dancer': '舞者',
   
@@ -107,7 +107,7 @@ const JOB_ROLES = {
   // 近战DPS
   'MELEE_DPS': ['武僧', '龙骑士', '武士', '忍者', '钐镰客', '蝰蛇剑士'],
   // 远程物理DPS
-  'PHYSICAL_RANGED_DPS': ['诗人', '机工士', '舞者'],
+  'PHYSICAL_RANGED_DPS': ['吟游诗人', '机工士', '舞者'],
   // 远程魔法DPS
   'MAGICAL_RANGED_DPS': ['黑魔法师', '召唤师', '赤魔法师', '青魔法师', '绘灵法师'],
   // 生产职业
@@ -136,7 +136,7 @@ const JOB_ABBREVIATIONS = {
   '钐镰客': 'RPR',
   '蝰蛇剑士': 'VPR',
   // 远程物理DPS
-  '诗人': 'BRD',
+  '吟游诗人': 'BRD',
   '机工士': 'MCH',
   '舞者': 'DNC',
   // 远程魔法DPS
@@ -248,7 +248,7 @@ const JOB_ICONS = {
   '钐镰客': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob12.png',
   
   // 远程物理DPS
-  '诗人': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob13.png',
+  '吟游诗人': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob13.png',
   '机工士': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob14.png',
   '舞者': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob15.png',
   
