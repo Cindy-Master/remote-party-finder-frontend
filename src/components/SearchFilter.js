@@ -4,8 +4,54 @@ import styled from 'styled-components';
 import { FiSearch, FiFilter, FiX, FiChevronDown } from 'react-icons/fi';
 import AnimatedButton from './AnimatedButton';
 import JobSelector from './JobSelector';
+import DutySelector from './DutySelector';
 import { useTheme } from '../contexts/ThemeContext';
 import '../styles/SearchFilter.css';
+
+// 本地存储键
+const STORAGE_KEY = 'ff14_pf_filter_settings';
+
+// 保存筛选条件到本地存储
+const saveFiltersToLocalStorage = (filters, query) => {
+  try {
+    const filterData = {
+      ...filters,
+      query,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filterData));
+    console.log('筛选条件已保存到本地存储');
+  } catch (error) {
+    console.error('保存筛选条件失败:', error);
+  }
+};
+
+// 从本地存储读取筛选条件
+const loadFiltersFromLocalStorage = () => {
+  try {
+    const filterData = localStorage.getItem(STORAGE_KEY);
+    if (!filterData) return null;
+    
+    const parsedData = JSON.parse(filterData);
+    // 移除时间戳字段
+    const { timestamp, ...filters } = parsedData;
+    
+    // 检查保存时间是否超过7天
+    const now = Date.now();
+    const isExpired = now - timestamp > 7 * 24 * 60 * 60 * 1000; // 7天过期时间
+    
+    if (isExpired) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    
+    console.log('已从本地存储加载筛选条件');
+    return filters;
+  } catch (error) {
+    console.error('读取筛选条件失败:', error);
+    return null;
+  }
+};
 
 const FilterContainer = styled(motion.div)`
   background-color: ${props => props.isDarkMode ? 'rgba(25, 25, 25, 0.95)' : 'rgba(255, 255, 255, 0.95)'};
@@ -110,19 +156,33 @@ const ButtonGroup = styled(motion.div)`
 
 const SearchFilter = ({ onSearch, initialFilters = {} }) => {
   const { isDarkMode } = useTheme();
-  const [query, setQuery] = useState(initialFilters.query || '');
+  
+  // 在组件初始化时，尝试从本地存储读取筛选条件
+  const loadedFilters = loadFiltersFromLocalStorage() || initialFilters;
+  
+  const [query, setQuery] = useState(loadedFilters.query || '');
   const [filters, setFilters] = useState({
-    server: initialFilters.server || '',
-    datacenter: initialFilters.datacenter || '',
-    category: initialFilters.category || '',
-    jobs: initialFilters.jobs || [],
+    server: loadedFilters.server || '',
+    datacenter: loadedFilters.datacenter || '',
+    category: loadedFilters.category || '',
+    jobs: loadedFilters.jobs || [],
+    duty: loadedFilters.duty || [],
   });
+  
   const [filtersExpanded, setFiltersExpanded] = useState(
     // 如果有任何初始过滤条件，则展开过滤器
-    Object.values(initialFilters).some(value => 
+    Object.values(loadedFilters).some(value => 
       value && (Array.isArray(value) ? value.length > 0 : true)
     )
   );
+  
+  // 组件挂载时，如果有本地存储的筛选条件，自动执行搜索
+  useEffect(() => {
+    if (loadedFilters && Object.keys(loadedFilters).length > 0) {
+      // 如果有本地存储的筛选条件，使用这些条件执行搜索
+      onSearch({ query, ...filters });
+    }
+  }, []);
   
   // 国服大区
   const datacenters = ['陆行鸟', '莫古力', '猫小胖', '豆豆柴'];
@@ -164,7 +224,12 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
   
   const handleSearch = () => {
     console.log("提交搜索条件:", { query, ...filters });
+    
+    // 执行搜索
     onSearch({ query, ...filters });
+    
+    // 保存筛选条件到本地存储
+    saveFiltersToLocalStorage(filters, query);
   };
   
   const clearFilters = () => {
@@ -174,7 +239,11 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
       datacenter: '',
       category: '',
       jobs: [],
+      duty: [],
     });
+    
+    // 清除本地存储的筛选条件
+    localStorage.removeItem(STORAGE_KEY);
   };
   
   const toggleFilters = () => {
@@ -303,6 +372,15 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
                 label="职业筛选"
                 value={filters.jobs}
                 onChange={(selectedJobs) => handleFilterChange('jobs', selectedJobs)}
+              />
+            </div>
+            
+            {/* 副本选择器 */}
+            <div style={{ marginTop: '15px' }}>
+              <DutySelector
+                label="副本筛选"
+                value={filters.duty}
+                onChange={(selectedDuties) => handleFilterChange('duty', selectedDuties)}
               />
             </div>
           </FilterOptions>

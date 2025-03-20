@@ -71,6 +71,12 @@ export const getListings = async (params = {}) => {
       delete params.server;
     }
     
+    // 处理副本ID数组参数
+    if (params.duty && Array.isArray(params.duty) && params.duty.length > 0) {
+      // API需要duty[]格式，无需修改，axios会自动处理数组参数
+      console.log('正在按副本筛选:', params.duty);
+    }
+    
     const response = await api.get('/listings', { params });
     
     // 处理响应数据，将英文类别转为中文

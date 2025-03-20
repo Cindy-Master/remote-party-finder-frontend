@@ -137,14 +137,9 @@ const ListingCard = ({ listing }) => {
         </div>
       </div>
       <div className="listing-footer">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Link to={`/listing/${id}`} className="view-details-btn">
-            查看详情
-          </Link>
-        </motion.div>
+        <Link to={`/listing/${id}`} className="view-details-btn">
+          查看详情
+        </Link>
       </div>
     </StyledCard>
   );

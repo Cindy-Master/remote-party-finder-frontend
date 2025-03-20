@@ -110,11 +110,19 @@
   border-radius: 4px;
   text-decoration: none;
   font-size: 14px;
-  transition: background-color 0.3s;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
 
 .view-details-btn:hover {
   background-color: #4b51c0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.view-details-btn:active {
+  background-color: #3f44a9;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .listing-description {
