@@ -236,8 +236,8 @@ const JOB_ICONS = {
   
   // 治疗职业图标 - 继续递增
   '白魔法师': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob4.png',
-  '占星术士': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob5.png',
-  '学者': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob6.png',
+  '学者': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob5.png',
+  '占星术士': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob6.png',
   '贤者': 'https://static.web.sdo.com/jijiamobile/pic/ff14/ffstones/job/zjob7.png',
   
   // 近战DPS
