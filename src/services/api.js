@@ -95,7 +95,8 @@ export const getListings = async (params = {}) => {
     return response.data;
   } catch (error) {
     console.error('获取列表数据失败:', error);
-    throw error;
+    // 返回一个空数据对象而不是抛出错误，避免中断整个流程
+    return { data: [] };
   }
 };
 

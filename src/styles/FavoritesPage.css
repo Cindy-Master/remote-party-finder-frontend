@@ -1,84 +1,169 @@
+:root {
+  --info-color: #3498db;
+  --warning-color: #f39c12;
+}
+
 .favorites-page {
-  padding: 40px 0;
-  min-height: 70vh;
+  padding: 20px;
+  min-height: 100vh;
 }
 
-.favorites-page .page-header {
-  margin-bottom: 32px;
-  text-align: center;
+.favorites-page.dark-mode {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
 }
 
-.favorites-page .page-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.page-header {
+  margin-bottom: 20px;
 }
 
-.favorites-page .page-header p {
-  font-size: 1.1rem;
+.page-header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.page-header p {
   color: var(--text-secondary);
-  margin: 0;
 }
 
 .settings-panel {
-  background-color: var(--card-bg);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .settings-group {
   display: flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 12px;
 }
 
-.actions-group {
-  display: flex;
-  gap: 12px;
-}
-
-.clear-fulfilled-btn,
-.clear-all-btn {
+.toggle-btn {
   display: flex;
   align-items: center;
   gap: 8px;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
   padding: 8px 16px;
   font-size: 0.9rem;
-  border-radius: 20px;
   font-weight: 500;
-  border: none;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.clear-fulfilled-btn {
-  background-color: var(--success-bg);
-  color: var(--success-color);
+.toggle-btn:hover {
+  background-color: var(--hover-color);
 }
 
-.clear-fulfilled-btn:hover {
+.toggle-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.toggle-btn.toggled {
+  animation: btn-pulse 0.5s ease;
+}
+
+.test-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--info-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.test-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.test-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes btn-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.actions-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.clear-fulfilled-btn, .clear-all-btn, .clear-expired-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-fulfilled-btn {
   background-color: var(--success-color);
   color: white;
 }
 
+.clear-fulfilled-btn:hover {
+  background-color: #27ae60;
+}
+
+.clear-expired-btn {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.clear-expired-btn:hover {
+  background-color: #e67e22;
+}
+
 .clear-all-btn {
-  background-color: var(--error-bg);
-  color: var(--error-color);
+  background-color: var(--error-color);
+  color: white;
 }
 
 .clear-all-btn:hover {
-  background-color: var(--error-color);
-  color: white;
+  background-color: #c0392b;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.empty-state p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: var(--text-secondary);
+}
+
+.empty-state .hint {
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
 }
 
 .favorites-list {
@@ -87,63 +172,62 @@
   gap: 20px;
 }
 
-.favorite-header {
-  margin-bottom: 16px;
-}
-
 .favorite-header h3 {
-  font-size: 1.3rem;
-  margin: 0;
-  padding-right: 90px; /* 给满员标签留出空间 */
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+  color: var(--primary-color);
 }
 
 .favorite-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 }
 
 .info-row {
   display: flex;
-  justify-content: space-between;
+  margin-bottom: 8px;
   align-items: center;
-  font-size: 0.95rem;
+  flex-wrap: wrap;
 }
 
 .info-label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  font-weight: 600;
+  margin-right: 6px;
   color: var(--text-secondary);
 }
 
 .info-value {
-  font-weight: 500;
+  color: var(--text-color);
+}
+
+.description-row {
+  margin-top: 10px;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.description-text {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 80px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.dark-mode .description-text {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .favorite-actions {
   display: flex;
   justify-content: flex-end;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-color);
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px 0;
-  color: var(--text-secondary);
-}
-
-.empty-state p {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.empty-state .hint {
-  font-size: 0.95rem;
-  margin-top: 8px;
-  opacity: 0.7;
 }
 
 /* 响应式设计 */
@@ -181,39 +265,12 @@
   background-color: rgba(211, 47, 47, 0.2);
 }
 
-.toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  outline: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.toggle-btn:hover {
-  background-color: var(--hover-color);
-}
-
-.toggle-btn.active {
-  background-color: var(--primary-color);
-  color: white;
+.toggle-btn svg {
+  font-size: 1.1rem;
 }
 
 .toggle-btn.active:hover {
   background-color: var(--primary-dark);
-}
-
-.toggle-btn svg {
-  font-size: 1.1rem;
 }
 
 .toggle-btn.toggled::after {
