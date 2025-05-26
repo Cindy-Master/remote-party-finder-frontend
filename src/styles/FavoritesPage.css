@@ -1,0 +1,239 @@
+.favorites-page {
+  padding: 40px 0;
+  min-height: 70vh;
+}
+
+.favorites-page .page-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.favorites-page .page-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.favorites-page .page-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.settings-panel {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.actions-group {
+  display: flex;
+  gap: 12px;
+}
+
+.clear-fulfilled-btn,
+.clear-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 20px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-fulfilled-btn {
+  background-color: var(--success-bg);
+  color: var(--success-color);
+}
+
+.clear-fulfilled-btn:hover {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.clear-all-btn {
+  background-color: var(--error-bg);
+  color: var(--error-color);
+}
+
+.clear-all-btn:hover {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.favorites-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.favorite-header {
+  margin-bottom: 16px;
+}
+
+.favorite-header h3 {
+  font-size: 1.3rem;
+  margin: 0;
+  padding-right: 90px; /* 给满员标签留出空间 */
+}
+
+.favorite-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-secondary);
+}
+
+.info-value {
+  font-weight: 500;
+}
+
+.favorite-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-secondary);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.empty-state .hint {
+  font-size: 0.95rem;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .favorites-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .settings-panel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .settings-group,
+  .actions-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .favorites-page .page-header h1 {
+    font-size: 2rem;
+  }
+}
+
+/* 暗黑模式特定样式 */
+.dark-mode .settings-panel {
+  background-color: var(--dark-card-bg);
+}
+
+.dark-mode .clear-fulfilled-btn {
+  background-color: rgba(46, 125, 50, 0.2);
+}
+
+.dark-mode .clear-all-btn {
+  background-color: rgba(211, 47, 47, 0.2);
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.toggle-btn:hover {
+  background-color: var(--hover-color);
+}
+
+.toggle-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.toggle-btn.active:hover {
+  background-color: var(--primary-dark);
+}
+
+.toggle-btn svg {
+  font-size: 1.1rem;
+}
+
+.toggle-btn.toggled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  animation: ripple 0.5s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    opacity: 1;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+} 

@@ -25,16 +25,6 @@ const cardVariants = {
       damping: 24,
       mass: 0.5
     }
-  },
-  hover: { 
-    scale: 1.02,
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-    transition: { duration: 0.3 }
-  },
-  tap: { 
-    scale: 0.98,
-    boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
-    transition: { duration: 0.15 }
   }
 };
 
@@ -45,8 +35,6 @@ const AnimatedCard = ({ children, delay = 0, className }) => {
       variants={cardVariants}
       initial="hidden"
       animate="visible"
-      whileHover="hover"
-      whileTap="tap"
       transition={{ delay }}
     >
       {children}

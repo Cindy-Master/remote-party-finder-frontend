@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { FiHome, FiInfo, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiInfo, FiMenu, FiX, FiStar } from 'react-icons/fi';
 import { useTheme } from '../contexts/ThemeContext';
 import '../styles/Header.css';
 
@@ -151,6 +151,24 @@ const Header = () => {
             </NavLink>
             
             <NavLink 
+              className={isActive('/favorites') ? 'active' : ''}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+            >
+              <Link to="/favorites">
+                <motion.div
+                  whileHover={{ y: -3 }}
+                  whileTap={{ y: 0 }}
+                  className="nav-item"
+                >
+                  <FiStar className="nav-icon" />
+                  <span>我的收藏</span>
+                </motion.div>
+              </Link>
+            </NavLink>
+            
+            <NavLink 
               className={isActive('/about') ? 'active' : ''}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -197,6 +215,20 @@ const Header = () => {
                 <span>首页</span>
               </Link>
             </motion.li>
+            
+            <motion.li
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link to="/favorites" onClick={closeMobileMenu}>
+                <FiStar className="nav-icon" />
+                <span>我的收藏</span>
+              </Link>
+            </motion.li>
+            
             <motion.li
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

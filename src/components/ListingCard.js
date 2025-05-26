@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { FiUsers, FiClock, FiMapPin, FiTag, FiGlobe } from 'react-icons/fi';
+import { FiUsers, FiClock, FiMapPin, FiTag, FiGlobe, FiStar, FiCheckCircle } from 'react-icons/fi';
 import AnimatedCard from './AnimatedCard';
 import { formatTimeLeft, isUrgentTime } from '../utils/timeUtils';
+import { useFavorites } from '../contexts/FavoritesContext';
 import '../styles/ListingCard.css';
 import { CATEGORY_EN_TO_ZH } from '../services/api';
 
@@ -28,6 +29,59 @@ const TimeLeft = styled.span`
   `}
 `;
 
+// 新增收藏按钮样式
+const FavoriteButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  outline: none;
+  
+  &:hover {
+    transform: scale(1.2);
+  }
+  
+  &:active {
+    transform: scale(0.9);
+  }
+  
+  svg {
+    font-size: 1.5rem;
+    transition: all 0.3s;
+    color: ${props => props.isFavorite ? '#ffbf00' : '#ccc'};
+    filter: ${props => props.isFavorite ? 'drop-shadow(0 0 3px rgba(255, 191, 0, 0.5))' : 'none'};
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: ${props => props.isFavorite ? '120%' : '0'};
+    height: ${props => props.isFavorite ? '120%' : '0'};
+    background-color: rgba(255, 191, 0, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    transition: all 0.3s;
+  }
+`;
+
+const FulfilledBadge = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--success-color);
+  font-size: 1.2rem;
+  margin-left: 10px;
+`;
+
 const ListingCard = ({ listing }) => {
   const {
     id,
@@ -43,6 +97,48 @@ const ListingCard = ({ listing }) => {
     is_cross_world,
     description
   } = listing;
+  
+  // 使用收藏上下文
+  const { addToFavorites, removeFromFavorites, isFavorite, isFulfilled } = useFavorites();
+  
+  // 状态来跟踪收藏状态和动画
+  const [favorite, setFavorite] = useState(isFavorite(id));
+  const [animating, setAnimating] = useState(false);
+  
+  // 当实际收藏状态变化时更新本地状态
+  useEffect(() => {
+    setFavorite(isFavorite(id));
+  }, [id, isFavorite]);
+  
+  // 检查是否已满员
+  const isListingFulfilled = isFulfilled(id);
+  
+  // 切换收藏状态
+  const toggleFavorite = (e) => {
+    e.preventDefault(); // 阻止链接跳转
+    e.stopPropagation(); // 阻止事件冒泡
+    
+    // 如果正在动画中，不响应点击
+    if (animating) return;
+    
+    // 设置动画标志
+    setAnimating(true);
+    
+    // 立即更新UI状态，不等待后端响应
+    setFavorite(!favorite);
+    
+    // 调用实际的添加/移除收藏函数
+    if (favorite) {
+      removeFromFavorites(id);
+    } else {
+      addToFavorites(listing);
+    }
+    
+    // 动画结束后重置标志
+    setTimeout(() => {
+      setAnimating(false);
+    }, 500);
+  };
 
   // 判断是否紧急（时间少于5分钟）
   const isUrgent = isUrgentTime(time_left);
@@ -137,6 +233,23 @@ const ListingCard = ({ listing }) => {
         </div>
       </div>
       <div className="listing-footer">
+        <div className="listing-actions">
+          <FavoriteButton
+            isFavorite={favorite}
+            onClick={toggleFavorite}
+            title={favorite ? "取消收藏" : "添加到收藏"}
+            className={animating ? "animating" : ""}
+          >
+            <FiStar />
+          </FavoriteButton>
+          
+          {isListingFulfilled && (
+            <FulfilledBadge title="招募已满员">
+              <FiCheckCircle />
+            </FulfilledBadge>
+          )}
+        </div>
+        
         <Link to={`/listing/${id}`} className="view-details-btn">
           查看详情
         </Link>

@@ -2,11 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ListingsProvider } from './contexts/ListingsContext';
+import { FavoritesProvider } from './contexts/FavoritesContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
 import DetailPage from './components/DetailPage';
 import AboutPage from './components/AboutPage';
+import FavoritesPage from './components/FavoritesPage';
 import ThemeToggle from './components/ThemeToggle';
 import ParticleBackground from './components/ParticleBackground';
 import { useTheme } from './contexts/ThemeContext';
@@ -27,6 +29,7 @@ const AppContent = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/listing/:id" element={<DetailPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
           </Routes>
         </main>
         <Footer />
@@ -40,7 +43,9 @@ function App() {
   return (
     <ThemeProvider>
       <ListingsProvider>
-        <AppContent />
+        <FavoritesProvider>
+          <AppContent />
+        </FavoritesProvider>
       </ListingsProvider>
     </ThemeProvider>
   );
