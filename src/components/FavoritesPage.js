@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FiTrash2, FiUser, FiUsers, FiClock, FiCheckCircle, FiVolume2, FiVolumeX, FiInfo, FiChevronDown, FiChevronUp, FiAlertTriangle } from 'react-icons/fi';
+import { FiTrash2, FiUser, FiUsers, FiClock, FiCheckCircle, FiVolume2, FiVolumeX, FiInfo, FiChevronDown, FiChevronUp, FiAlertTriangle, FiBell, FiBellOff } from 'react-icons/fi';
 import { useTheme } from '../contexts/ThemeContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { playAlarmSound } from '../services/notificationService';
@@ -170,11 +170,13 @@ const FavoritesPage = () => {
     fulfilledListings, 
     expiredListings,
     soundEnabled,
+    repeatAlarmEnabled,
     removeFromFavorites, 
     clearFulfilledFavorites, 
     clearExpiredFavorites,
     clearAllFavorites, 
     toggleSound,
+    toggleRepeatAlarm,
     isExpired 
   } = useFavorites();
   
@@ -185,7 +187,7 @@ const FavoritesPage = () => {
   const handleToggleSound = () => {
     toggleSound();
     // 添加临时反馈
-    const btn = document.querySelector('.toggle-btn');
+    const btn = document.querySelector('.toggle-sound-btn');
     if (btn) {
       btn.classList.add('toggled');
       setTimeout(() => btn.classList.remove('toggled'), 500);
@@ -201,6 +203,17 @@ const FavoritesPage = () => {
           audio.currentTime = 0;
         }
       }, 1000);
+    }
+  };
+  
+  // 处理重复提醒开关切换
+  const handleToggleRepeatAlarm = () => {
+    toggleRepeatAlarm();
+    // 添加临时反馈
+    const btn = document.querySelector('.toggle-repeat-btn');
+    if (btn) {
+      btn.classList.add('toggled');
+      setTimeout(() => btn.classList.remove('toggled'), 500);
     }
   };
   
@@ -269,6 +282,10 @@ const FavoritesPage = () => {
                 </div>
                 <div className="help-item">
                   <FiCheckCircle className="help-item-icon" />
+                  <span>开启重复提醒后，招募满员时会每3秒重复提示音，直到满员招募被清除</span>
+                </div>
+                <div className="help-item">
+                  <FiCheckCircle className="help-item-icon" />
                   <span>使用"清除已满员"按钮可以一键移除所有已满员的招募</span>
                 </div>
                 <div className="help-item">
@@ -288,11 +305,21 @@ const FavoritesPage = () => {
         >
           <div className="settings-group">
             <button 
-              className={`toggle-btn ${soundEnabled ? 'active' : ''}`}
+              className={`toggle-btn toggle-sound-btn ${soundEnabled ? 'active' : ''}`}
               onClick={handleToggleSound}
             >
               {soundEnabled ? <FiVolume2 /> : <FiVolumeX />}
               {soundEnabled ? '声音已开启' : '声音已关闭'}
+            </button>
+            
+            <button 
+              className={`toggle-btn toggle-repeat-btn ${repeatAlarmEnabled ? 'active' : ''}`}
+              onClick={handleToggleRepeatAlarm}
+              disabled={!soundEnabled}
+              title={!soundEnabled ? "请先开启声音" : ""}
+            >
+              {repeatAlarmEnabled ? <FiBell /> : <FiBellOff />}
+              {repeatAlarmEnabled ? '重复提醒已开启' : '重复提醒已关闭'}
             </button>
           </div>
           

@@ -70,6 +70,31 @@
   animation: btn-pulse 0.5s ease;
 }
 
+.toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggle-repeat-btn {
+  background-color: var(--card-bg);
+  border-color: var(--info-color);
+  color: var(--text-color);
+}
+
+.toggle-repeat-btn.active {
+  background-color: var(--info-color);
+  color: white;
+  border-color: var(--info-color);
+}
+
+.toggle-repeat-btn:not(:disabled):hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.toggle-repeat-btn.active:not(:disabled):hover {
+  background-color: #2980b9;
+}
+
 .test-btn {
   display: flex;
   align-items: center;

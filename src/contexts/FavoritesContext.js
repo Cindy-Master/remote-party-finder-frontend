@@ -34,6 +34,14 @@ export const FavoritesProvider = ({ children }) => {
   // 添加一个锁状态来防止重叠执行
   const [isChecking, setIsChecking] = useState(false);
   
+  // 新增：是否启用重复提醒音效
+  const [repeatAlarmEnabled, setRepeatAlarmEnabled] = useState(() => {
+    return localStorage.getItem('repeat-alarm-enabled') === 'true';
+  });
+  
+  // 新增：用于存储重复提醒定时器的引用
+  const repeatAlarmRef = React.useRef(null);
+  
   // 用于取消定时器的引用
   const intervalRef = React.useRef(null);
   
@@ -42,6 +50,7 @@ export const FavoritesProvider = ({ children }) => {
   const fulfilledListingsRef = React.useRef(fulfilledListings);
   const expiredListingsRef = React.useRef(expiredListings);
   const soundEnabledRef = React.useRef(soundEnabled);
+  const repeatAlarmEnabledRef = React.useRef(repeatAlarmEnabled);
   
   // 更新ref值
   useEffect(() => {
@@ -60,6 +69,10 @@ export const FavoritesProvider = ({ children }) => {
     soundEnabledRef.current = soundEnabled;
   }, [soundEnabled]);
   
+  useEffect(() => {
+    repeatAlarmEnabledRef.current = repeatAlarmEnabled;
+  }, [repeatAlarmEnabled]);
+  
   // 将收藏数据保存到本地存储
   useEffect(() => {
     localStorage.setItem('ffxiv-favorites', JSON.stringify(favorites));
@@ -70,6 +83,11 @@ export const FavoritesProvider = ({ children }) => {
     localStorage.setItem('sound-enabled', soundEnabled);
   }, [soundEnabled]);
   
+  // 新增：保存重复提醒设置
+  useEffect(() => {
+    localStorage.setItem('repeat-alarm-enabled', repeatAlarmEnabled);
+  }, [repeatAlarmEnabled]);
+  
   // 清理音频元素
   useEffect(() => {
     return () => {
@@ -79,6 +97,49 @@ export const FavoritesProvider = ({ children }) => {
       }
     };
   }, [audioElement]);
+  
+  // 新增：开始重复播放声音提醒的函数
+  const startRepeatingAlarm = useCallback(() => {
+    // 如果有已存在的定时器，先清除
+    if (repeatAlarmRef.current) {
+      clearInterval(repeatAlarmRef.current);
+      repeatAlarmRef.current = null;
+    }
+    
+    // 只有当声音和重复提醒都启用时才创建定时器
+    if (soundEnabledRef.current && repeatAlarmEnabledRef.current) {
+      console.log('[重复提醒] 开始每3秒播放一次满员提醒');
+      
+      // 立即播放一次声音
+      const audio = playAlarmSound();
+      setAudioElement(audio);
+      
+      // 设置定时器，每3秒播放一次声音
+      repeatAlarmRef.current = setInterval(() => {
+        // 检查是否仍然有满员的招募
+        const currentFulfilledListings = fulfilledListingsRef.current;
+        
+        if (currentFulfilledListings.size > 0) {
+          console.log('[重复提醒] 播放重复满员提醒音效');
+          playAlarmSound(); // 使用缓存的音频资源播放
+        } else {
+          // 如果没有满员招募了，停止重复提醒
+          console.log('[重复提醒] 没有满员招募，停止重复提醒');
+          clearInterval(repeatAlarmRef.current);
+          repeatAlarmRef.current = null;
+        }
+      }, 3000); // 每3秒执行一次
+    }
+  }, []);
+  
+  // 新增：停止重复声音提醒的函数
+  const stopRepeatingAlarm = useCallback(() => {
+    if (repeatAlarmRef.current) {
+      console.log('[重复提醒] 停止重复提醒');
+      clearInterval(repeatAlarmRef.current);
+      repeatAlarmRef.current = null;
+    }
+  }, []);
   
   // 添加到收藏
   const addToFavorites = async (listing) => {
@@ -239,12 +300,25 @@ export const FavoritesProvider = ({ children }) => {
       newSet.delete(listingId);
       return newSet;
     });
+    setExpiredListings(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(listingId);
+      return newSet;
+    });
+    
+    // 如果满员列表为空，停止重复提醒
+    if (fulfilledListings.size <= 1 && fulfilledListings.has(listingId)) {
+      stopRepeatingAlarm();
+    }
   };
   
   // 清空所有已满员的收藏
   const clearFulfilledFavorites = () => {
     setFavorites(prev => prev.filter(item => !fulfilledListings.has(item.id)));
     setFulfilledListings(new Set());
+    
+    // 停止重复提醒
+    stopRepeatingAlarm();
   };
   
   // 清空所有已过期的收藏
@@ -273,6 +347,7 @@ export const FavoritesProvider = ({ children }) => {
     const currentFulfilledListings = fulfilledListingsRef.current;
     const currentExpiredListings = expiredListingsRef.current;
     const isSoundEnabled = soundEnabledRef.current;
+    const isRepeatAlarmEnabled = repeatAlarmEnabledRef.current;
     
     if (currentFavorites.length === 0) {
       console.log('[定时检查] 没有收藏的招募，跳过检查');
@@ -467,9 +542,9 @@ export const FavoritesProvider = ({ children }) => {
               )
             );
             
-            // 播放声音
-            if (isSoundEnabled) {
-              console.log(`[定时检查] 播放满员提示音`);
+            // 如果启用了声音和重复提醒，播放声音将由 useEffect 处理
+            if (isSoundEnabled && !repeatAlarmEnabledRef.current) {
+              console.log(`[定时检查] 播放单次满员提示音`);
               const audio = playAlarmSound();
               setAudioElement(audio);
             }
@@ -534,6 +609,12 @@ export const FavoritesProvider = ({ children }) => {
     setSoundEnabled(prev => !prev);
   };
   
+  // 新增：切换重复提醒开关
+  const toggleRepeatAlarm = () => {
+    console.log('切换重复提醒状态，当前状态:', repeatAlarmEnabled, '→', !repeatAlarmEnabled);
+    setRepeatAlarmEnabled(prev => !prev);
+  };
+  
   // 检查是否已收藏
   const isFavorite = (listingId) => {
     return favorites.some(item => item.id === listingId);
@@ -549,18 +630,35 @@ export const FavoritesProvider = ({ children }) => {
     return expiredListings.has(listingId);
   };
   
+  // 当满员状态变化时，处理重复提醒
+  useEffect(() => {
+    // 检查是否有满员招募
+    if (fulfilledListings.size > 0 && repeatAlarmEnabled && soundEnabled) {
+      startRepeatingAlarm();
+    } else {
+      stopRepeatingAlarm();
+    }
+    
+    // 组件卸载时清理定时器
+    return () => {
+      stopRepeatingAlarm();
+    };
+  }, [fulfilledListings, repeatAlarmEnabled, soundEnabled, startRepeatingAlarm, stopRepeatingAlarm]);
+  
   // 提供给上下文的值
   const value = {
     favorites,
     fulfilledListings,
     expiredListings,
     soundEnabled,
+    repeatAlarmEnabled,
     addToFavorites,
     removeFromFavorites,
     clearFulfilledFavorites,
     clearExpiredFavorites,
     clearAllFavorites,
     toggleSound,
+    toggleRepeatAlarm,
     isFavorite,
     isFulfilled,
     isExpired,
