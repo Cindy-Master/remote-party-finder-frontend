@@ -17,3 +17,9 @@
               https://github.com/Cindy-Master/remote-party-finder-frontend
             </a>
           </p>
+            <p>
+            <strong>国服网页地址：</strong>
+            <a href="https://xivpf.ff14.xin" target="_blank" rel="noopener noreferrer">
+             https://xivpf.ff14.xin
+            </a>
+          </p>
