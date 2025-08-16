@@ -6,6 +6,7 @@ import { FiUsers, FiClock, FiMapPin, FiTag, FiGlobe, FiStar, FiCheckCircle } fro
 import AnimatedCard from './AnimatedCard';
 import { formatTimeLeft, isUrgentTime } from '../utils/timeUtils';
 import { useFavorites } from '../contexts/FavoritesContext';
+import { highlightFFXIVChars, containsFFXIVChars } from '../utils/unicodeUtils';
 import '../styles/ListingCard.css';
 import { CATEGORY_EN_TO_ZH } from '../services/api';
 
@@ -80,6 +81,36 @@ const FulfilledBadge = styled.span`
   color: var(--success-color);
   font-size: 1.2rem;
   margin-left: 10px;
+`;
+
+// 新增：FF14特殊字符高亮样式
+const FFXIVCharText = styled.span`
+  .ffxiv-char {
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
+    position: relative;
+    cursor: help;
+    
+    &:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+      font-weight: normal;
+    }
+  }
 `;
 
 const ListingCard = ({ listing }) => {
@@ -161,10 +192,25 @@ const ListingCard = ({ listing }) => {
     return dutyValue;
   };
 
+  // 渲染包含特殊字符的文本
+  const renderTextWithFFXIVChars = (text) => {
+    if (!text) return text;
+    
+    if (containsFFXIVChars(text)) {
+      return (
+        <FFXIVCharText 
+          dangerouslySetInnerHTML={{ __html: highlightFFXIVChars(text) }}
+        />
+      );
+    }
+    
+    return text;
+  };
+
   return (
     <StyledCard>
       <div className="listing-header">
-        <h3 className="listing-title">{name}</h3>
+        <h3 className="listing-title">{renderTextWithFFXIVChars(name)}</h3>
         <TimeLeft className={`listing-time ${isUrgent ? 'urgent' : ''}`} isUrgent={isUrgent}>
           <IconWrapper>
             <FiClock />
@@ -213,12 +259,12 @@ const ListingCard = ({ listing }) => {
           </p>
           <p>
             <span className="info-label">任务：</span>
-            <span>{getDutyName(duty)}</span>
+            <span>{renderTextWithFFXIVChars(getDutyName(duty))}</span>
           </p>
           {description && (
             <div className="listing-description">
               <p className="description-label">招募说明：</p>
-              <p className="description-content">{description}</p>
+              <p className="description-content">{renderTextWithFFXIVChars(description)}</p>
             </div>
           )}
         </div>

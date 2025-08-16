@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { FiSearch, FiFilter, FiX, FiChevronDown } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiX, FiChevronDown, FiInfo } from 'react-icons/fi';
 import AnimatedButton from './AnimatedButton';
 import JobSelector from './JobSelector';
 import DutySelector from './DutySelector';
 import { useTheme } from '../contexts/ThemeContext';
+import { expandSearchQuery, containsFFXIVChars } from '../utils/unicodeUtils';
 import '../styles/SearchFilter.css';
 
 // 本地存储键
@@ -108,6 +109,29 @@ const ClearButton = styled(motion.button)`
   font-size: 18px;
 `;
 
+const UnicodeHint = styled(motion.div)`
+  position: absolute;
+  right: 45px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'};
+  font-size: 14px;
+  display: ${props => props.show ? 'flex' : 'none'};
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+`;
+
+const SearchHint = styled(motion.div)`
+  font-size: 12px;
+  color: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)'};
+  margin-top: 5px;
+  padding: 8px 12px;
+  background-color: ${props => props.isDarkMode ? 'rgba(30, 30, 30, 0.5)' : 'rgba(255, 255, 255, 0.5)'};
+  border-radius: 4px;
+  border-left: 3px solid var(--primary-color);
+`;
+
 const FilterSection = styled(motion.div)`
   margin-top: 15px;
 `;
@@ -169,6 +193,10 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
     duty: loadedFilters.duty || [],
   });
   
+  // 新增状态：检测Unicode字符
+  const [hasUnicodeChars, setHasUnicodeChars] = useState(false);
+  const [showUnicodeHint, setShowUnicodeHint] = useState(false);
+  
   const [filtersExpanded, setFiltersExpanded] = useState(
     // 如果有任何初始过滤条件，则展开过滤器
     Object.values(loadedFilters).some(value => 
@@ -225,8 +253,15 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
   const handleSearch = () => {
     console.log("提交搜索条件:", { query, ...filters });
     
+    // 处理Unicode字符的搜索查询
+    const expandedQuery = expandSearchQuery(query);
+    const finalFilters = { 
+      ...filters,
+      query: expandedQuery !== query ? expandedQuery : query 
+    };
+    
     // 执行搜索
-    onSearch({ query, ...filters });
+    onSearch(finalFilters);
     
     // 保存筛选条件到本地存储
     saveFiltersToLocalStorage(filters, query);
@@ -252,6 +287,28 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
   
   const clearSearch = () => {
     setQuery('');
+    setHasUnicodeChars(false);
+    setShowUnicodeHint(false);
+  };
+  
+  // 监听搜索框输入，检测Unicode字符
+  const handleQueryChange = (e) => {
+    const newQuery = e.target.value;
+    setQuery(newQuery);
+    
+    // 检测是否包含Unicode转义序列或FF14字符
+    const hasUnicode = /\\u[0-9A-Fa-f]{4}|\\u\{[0-9A-Fa-f]+\}|U\+[0-9A-Fa-f]+|0x[0-9A-Fa-f]+/.test(newQuery) || 
+                      containsFFXIVChars(newQuery);
+    setHasUnicodeChars(hasUnicode);
+    
+    // 显示转换提示
+    if (hasUnicode && newQuery.length > 0) {
+      setShowUnicodeHint(true);
+      // 3秒后自动隐藏提示
+      setTimeout(() => setShowUnicodeHint(false), 3000);
+    } else {
+      setShowUnicodeHint(false);
+    }
   };
   
   useEffect(() => {
@@ -278,11 +335,21 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
           </SearchIcon>
           <input
             type="text"
-            placeholder="搜索招募信息..."
+            placeholder="搜索招募信息... (支持 \\uE044 等FF14特殊字符)"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleQueryChange}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
+          <UnicodeHint 
+            isDarkMode={isDarkMode}
+            show={hasUnicodeChars}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+          >
+            <FiInfo size={12} />
+            Unicode
+          </UnicodeHint>
           <ClearButton 
             isDarkMode={isDarkMode}
             show={query.length > 0}
@@ -301,6 +368,18 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
           搜索
         </AnimatedButton>
       </div>
+      
+      {/* Unicode字符搜索提示 */}
+      {showUnicodeHint && (
+        <SearchHint
+          isDarkMode={isDarkMode}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+        >
+          💡 检测到FF14特殊字符！支持搜索格式：\\uE044, \\u{'{E044}'}, U+E044, 0xE044
+        </SearchHint>
+      )}
       
       <FilterHeader onClick={toggleFilters}>
         <motion.h3

@@ -47,6 +47,15 @@
   --dps-color: #ef5350;
 }
 
+/* FF14字体定义 - 支持游戏内特殊字符 */
+@font-face {
+  font-family: 'FFXIV';
+  src: url('/FFXIV_Lodestone_SSF.ttf') format('truetype'), 
+       url('/FFXIV_Lodestone_SSF.woff') format('woff');
+  unicode-range: U+E020-E0DB;
+  font-display: swap;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -58,7 +67,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'FFXIV', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;

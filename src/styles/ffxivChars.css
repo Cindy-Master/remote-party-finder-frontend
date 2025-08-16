@@ -1,0 +1,113 @@
+/* FF14特殊字符支持样式 */
+
+/* FF14字体特殊字符样式 */
+.ffxiv-char {
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  position: relative;
+  cursor: help;
+  animation: gradientShift 3s ease infinite;
+  filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 特殊字符Tooltip */
+.ffxiv-char:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  font-weight: normal;
+  pointer-events: none;
+  opacity: 0;
+  animation: tooltipFadeIn 0.3s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-5px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* 暗色模式下的特殊字符样式 */
+[data-theme="dark"] .ffxiv-char {
+  filter: drop-shadow(0 0 5px rgba(255, 107, 107, 0.5));
+}
+
+/* 搜索框中的Unicode提示样式 */
+.unicode-hint {
+  font-size: 12px;
+  color: var(--primary-color);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.unicode-hint:hover {
+  opacity: 1;
+}
+
+/* 搜索提示框样式 */
+.search-hint {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* ListingCard中特殊字符的额外样式 */
+.listing-title .ffxiv-char {
+  font-size: 1.1em;
+}
+
+.description-content .ffxiv-char {
+  display: inline-block;
+  margin: 0 1px;
+}
+
+/* 确保特殊字符在移动设备上也能正常显示 */
+@media (max-width: 768px) {
+  .ffxiv-char {
+    font-size: 1em;
+    filter: drop-shadow(0 0 2px rgba(255, 107, 107, 0.4));
+  }
+  
+  .ffxiv-char:hover::after {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .ffxiv-char {
+    background: #ff0000;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: none;
+  }
+}
