@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { BackgroundProvider } from './contexts/BackgroundContext';
 import { ListingsProvider } from './contexts/ListingsContext';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import Header from './components/Header';
@@ -10,7 +11,7 @@ import DetailPage from './components/DetailPage';
 import AboutPage from './components/AboutPage';
 import FavoritesPage from './components/FavoritesPage';
 import ThemeToggle from './components/ThemeToggle';
-import ParticleBackground from './components/ParticleBackground';
+import DynamicBackground from './components/DynamicBackground';
 import { useTheme } from './contexts/ThemeContext';
 import { preloadAlarmSound } from './services/notificationService';
 import './styles/global.css';
@@ -29,7 +30,7 @@ const AppContent = () => {
   return (
     <Router>
       <div className="App">
-        <ParticleBackground />
+        <DynamicBackground />
         <Header />
         <main className="main-content">
           <Routes>
@@ -49,11 +50,13 @@ const AppContent = () => {
 function App() {
   return (
     <ThemeProvider>
-      <ListingsProvider>
-        <FavoritesProvider>
-          <AppContent />
-        </FavoritesProvider>
-      </ListingsProvider>
+      <BackgroundProvider>
+        <ListingsProvider>
+          <FavoritesProvider>
+            <AppContent />
+          </FavoritesProvider>
+        </ListingsProvider>
+      </BackgroundProvider>
     </ThemeProvider>
   );
 }

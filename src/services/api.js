@@ -71,10 +71,16 @@ export const getListings = async (params = {}) => {
       delete params.server;
     }
     
-    // 处理副本ID数组参数
+    // 处理副本ID数组参数 - 转换为逗号分隔的字符串
     if (params.duty && Array.isArray(params.duty) && params.duty.length > 0) {
-      // API需要duty[]格式，无需修改，axios会自动处理数组参数
+      params.duty = params.duty.join(',');
       console.log('正在按副本筛选:', params.duty);
+    }
+
+    // 处理职业ID数组参数 - 转换为逗号分隔的字符串
+    if (params.jobs && Array.isArray(params.jobs) && params.jobs.length > 0) {
+      params.jobs = params.jobs.join(',');
+      console.log('正在按职业筛选:', params.jobs);
     }
     
     const response = await api.get('/listings', { params });

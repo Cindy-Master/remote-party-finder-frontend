@@ -211,10 +211,10 @@ const SearchFilter = ({ onSearch, initialFilters = {} }) => {
       onSearch({ query, ...filters });
     }
   }, []);
-  
+
   // 国服大区
   const datacenters = ['陆行鸟', '莫古力', '猫小胖', '豆豆柴'];
-  
+
   // 国服服务器列表（根据大区分组）
   const servers = {
     '陆行鸟': ['红玉海', '神意之地', '拉诺西亚', '幻影群岛', '萌芽池', '宇宙和音', '沃仙曦染', '晨曦王座'],

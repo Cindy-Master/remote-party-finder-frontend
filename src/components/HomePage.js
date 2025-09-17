@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getListings } from '../services/api';
 import ListingCard from './ListingCard';
+import CompactListingCard from './CompactListingCard';
 import SearchFilter from './SearchFilter';
 import Pagination from './Pagination';
 import LoadingSpinner from './LoadingSpinner';
+import LayoutToggle from './LayoutToggle';
 import { useTheme } from '../contexts/ThemeContext';
 import { useListings } from '../contexts/ListingsContext';
 import '../styles/HomePage.css';
@@ -44,10 +46,11 @@ const HomePage = () => {
     updateFilters,
     updatePage
   } = useListings();
-  
+
   const [loading, setLoading] = useState(!hasLoadedData);
   const [error, setError] = useState(null);
   const [isFirstLoad, setIsFirstLoad] = useState(!hasLoadedData);
+  const [isCompactView, setIsCompactView] = useState(false);
   const isManualSearchRef = useRef(false);
 
   useEffect(() => {
@@ -177,6 +180,17 @@ const HomePage = () => {
           <SearchFilter onSearch={handleSearch} initialFilters={filters} />
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <LayoutToggle
+            isCompactView={isCompactView}
+            onToggle={setIsCompactView}
+          />
+        </motion.div>
+
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
@@ -198,21 +212,34 @@ const HomePage = () => {
             <p>没有找到符合条件的招募信息</p>
           </motion.div>
         ) : (
-          <AnimatePresence>
-            <motion.div 
-              className="listings-container"
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isCompactView ? 'compact' : 'grid'}
+              className={`listings-container ${isCompactView ? 'compact-view' : 'grid-view'}`}
               variants={containerVariants}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
             >
               {listings.map((listing, index) => (
-                <motion.div
-                  key={listing.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ delay: index * 0.05, duration: 0.5 }}
-                >
-                  <ListingCard listing={listing} />
-                </motion.div>
+                isCompactView ? (
+                  <CompactListingCard
+                    key={listing.id}
+                    listing={listing}
+                    index={index}
+                  />
+                ) : (
+                  <motion.div
+                    key={listing.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ delay: index * 0.05, duration: 0.5 }}
+                  >
+                    <ListingCard listing={listing} />
+                  </motion.div>
+                )
               ))}
             </motion.div>
           </AnimatePresence>
