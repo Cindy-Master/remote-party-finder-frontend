@@ -15,7 +15,9 @@ export const ListingsProvider = ({ children }) => {
     total_pages: 0
   });
   // 存储筛选条件
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    datacenter: '陆行鸟,猫小胖,莫古力,豆豆柴'
+  });
   // 存储是否已加载数据的标志
   const [hasLoadedData, setHasLoadedData] = useState(false);
 
@@ -45,7 +47,9 @@ export const ListingsProvider = ({ children }) => {
       per_page: 20,
       total_pages: 0
     });
-    setFilters({});
+    setFilters({
+      datacenter: '陆行鸟,猫小胖,莫古力,豆豆柴'
+    });
     setHasLoadedData(false);
   };
 
